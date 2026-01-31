@@ -1,0 +1,519 @@
+{
+  "updatedAt": "2025-09-26T21:26:50.000Z",
+  "createdAt": "2025-09-26T20:32:41.518Z",
+  "id": "SK8YPFtqBFo5lYWl",
+  "name": "Dream Symbol Telegram Bot",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "/telegram-dream-bot",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "cc00b83f-cb65-4c49-864b-cde56ddc5cb4",
+      "name": "Telegram Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        -144
+      ],
+      "webhookId": "telegram-dream-bot"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "405e031e-e3c9-486c-ba83-ff3cfbfd8cf3",
+              "leftValue": "={{ $json.message.text }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "ba4ab83c-af16-4e14-8ad8-6a03e41b49de",
+      "name": "Check Message Exists",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -304,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract message details\nconst message = $input.first().json.message;\nconst chatId = message.chat.id;\nconst messageText = message.text.toLowerCase().trim();\nconst userId = message.from.id;\nconst userName = message.from.first_name || 'User';\n\n// Handle special commands\nif (messageText === '/start') {\n  return {\n    chatId: chatId,\n    responseText: `Hello ${userName}! 👋\\n\\nWelcome to the Dream Symbol Bot! 🌙✨\\n\\nSend me any dream symbol (like 'water', 'flying', 'snake', etc.) and I'll tell you what it might mean in your dreams.\\n\\nExample: Just type \"water\" or \"I dreamed about water\"\\n\\nType /help for more information.`,\n    isCommand: true\n  };\n}\n\nif (messageText === '/help') {\n  return {\n    chatId: chatId,\n    responseText: `Dream Symbol Bot Help 📖\\n\\n🔍 How to use:\\n• Simply send me a dream symbol\\n• Examples: \"snake\", \"flying\", \"water\"\\n• I'll look up the meaning for you\\n\\n💡 Tips:\\n• Use single words for best results\\n• Try different symbols if one isn't found\\n• Common symbols work best\\n\\n🌟 Available symbols include:\\nAnimals, nature, objects, actions, people, and more!`,\n    isCommand: true\n  };\n}\n\n// Extract dream symbol from message\nlet dreamSymbol = messageText;\n\n// Remove common phrases to extract the symbol\nconst phrasesToRemove = [\n  'i dreamed about',\n  'i dreamt about', \n  'what does',\n  'mean in dreams',\n  'dream about',\n  'dreamed of',\n  'dreamt of',\n  'meaning of',\n  'symbolize',\n  'symbol'\n];\n\nphrasesToRemove.forEach(phrase => {\n  dreamSymbol = dreamSymbol.replace(new RegExp(phrase, 'gi'), '').trim();\n});\n\n// Remove extra whitespace and get first significant word\ndreamSymbol = dreamSymbol.split(' ').filter(word => word.length > 2)[0] || dreamSymbol;\n\n// Clean up the symbol\ndreamSymbol = dreamSymbol.replace(/[^a-zA-Z]/g, '').toLowerCase();\n\nif (!dreamSymbol || dreamSymbol.length < 2) {\n  return {\n    chatId: chatId,\n    responseText: `I couldn't understand which dream symbol you're asking about. 🤔\\n\\nPlease send me a dream symbol like:\\n• \"water\"\\n• \"snake\"\\n• \"flying\"\\n• \"house\"\\n\\nOr type /help for more information.`,\n    isCommand: true\n  };\n}\n\nreturn {\n  chatId: chatId,\n  dreamSymbol: dreamSymbol,\n  originalMessage: messageText,\n  userName: userName,\n  isCommand: false\n};"
+      },
+      "id": "eb47f27f-3a4e-4236-b74c-f06bc1e0aeaa",
+      "name": "Process Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -96,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "condition-1",
+              "leftValue": "={{ $json.isCommand }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "cb64bac4-60db-45ae-968a-b52e13ef2729",
+      "name": "Check If Command",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        128,
+        16
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "=dream_symbols",
+        "matchType": "={{$json.dreamSymbol}}"
+      },
+      "id": "b6105c8e-89bc-450c-91bf-0a21f505c7f2",
+      "name": "Query Database",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        480,
+        224
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "fk11Uf2J9pVNo2H5",
+          "name": "Supabase account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "condition-1",
+              "leftValue": "={{ $json.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "2d8823a2-2eb5-483c-bbd1-8700077d3a6d",
+      "name": "Check Symbol Found",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        704,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the first result from database\nconst result = $input.first().json;\nconst inputData = $('process-message').first().json;\n\nconst response = `🌙 Dream Symbol: **${result.symbol.toUpperCase()}**\\n\\n✨ **Meaning:**\\n${result.meaning}\\n\\n🏷️ Category: ${result.category || 'General'}\\n\\n💫 Remember, dream interpretations are personal and can vary based on your own experiences and emotions.`;\n\nreturn {\n  chatId: inputData.chatId,\n  responseText: response\n};"
+      },
+      "id": "4f8af3d6-907b-4ecf-b28c-cd20bee7e2b8",
+      "name": "Format Found Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        928,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Symbol not found response\nconst inputData = $('process-message').first().json;\n\nconst response = `🔍 Symbol \"${inputData.dreamSymbol}\" not found in my database.\\n\\n💡 **Suggestions:**\\n• Try a simpler term (e.g., \"water\" instead of \"ocean\")\\n• Check spelling\\n• Try related symbols\\n\\n🌟 **Popular symbols I know:**\\nwater, flying, snake, house, car, dog, fire, baby, spider, death\\n\\nWould you like to try another symbol?`;\n\nreturn {\n  chatId: inputData.chatId,\n  responseText: response\n};"
+      },
+      "id": "c0294d59-8c29-4fba-829b-244817bf0669",
+      "name": "Format Not Found Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        928,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "={{ $json.responseText }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "18851588-9ac5-436d-933b-77cd41285d84",
+      "name": "Send Telegram Response",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        896,
+        -160
+      ],
+      "webhookId": "a596ae69-0d74-4cb9-a5fd-348333d89e66"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "={{ $json.responseText }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "95bec811-eb53-4096-a754-a8f758ab04a7",
+      "name": "Send Command Response",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        480,
+        -48
+      ],
+      "webhookId": "beefdf23-c9aa-42b2-9104-028a7ec57f3d",
+      "credentials": {
+        "telegramApi": {
+          "id": "afOXm4bmSXYOPZEB",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "OK",
+        "options": {}
+      },
+      "id": "6cc14e42-fcd4-4932-b7d5-5a1d7ed66034",
+      "name": "Command Webhook Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        704,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1184,
+        208
+      ],
+      "id": "656e5b5c-da78-4b80-95ff-3867467cd0dd",
+      "name": "Response1",
+      "webhookId": "060de67c-d27e-4e45-970a-e57c45f8e34b",
+      "credentials": {
+        "telegramApi": {
+          "id": "afOXm4bmSXYOPZEB",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -528,
+        128
+      ],
+      "id": "55a1e0b7-58cc-45c4-b182-70d4b475f626",
+      "name": "Telegram Trigger",
+      "webhookId": "e1679ccf-173e-49c5-8368-0fe4ae4c85c7",
+      "credentials": {
+        "telegramApi": {
+          "id": "afOXm4bmSXYOPZEB",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Webhook": {
+      "main": [
+        []
+      ]
+    },
+    "Check Message Exists": {
+      "main": [
+        [
+          {
+            "node": "Process Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Message": {
+      "main": [
+        [
+          {
+            "node": "Check If Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check If Command": {
+      "main": [
+        [
+          {
+            "node": "Send Command Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Query Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query Database": {
+      "main": [
+        [
+          {
+            "node": "Check Symbol Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Symbol Found": {
+      "main": [
+        [
+          {
+            "node": "Format Found Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Not Found Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Found Response": {
+      "main": [
+        [
+          {
+            "node": "Response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Not Found Response": {
+      "main": [
+        [
+          {
+            "node": "Response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Telegram Response": {
+      "main": [
+        []
+      ]
+    },
+    "Send Command Response": {
+      "main": [
+        [
+          {
+            "node": "Command Webhook Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Check Message Exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Telegram Trigger": [
+      {
+        "json": {
+          "update_id": 159978415,
+          "message": {
+            "message_id": 46,
+            "from": {
+              "id": 1290073689,
+              "is_bot": false,
+              "first_name": "Miguel",
+              "last_name": "Simon",
+              "language_code": "en"
+            },
+            "chat": {
+              "id": 1290073689,
+              "first_name": "Miguel",
+              "last_name": "Simon",
+              "type": "private"
+            },
+            "date": 1758920717,
+            "text": "what does flying represent?"
+          }
+        }
+      }
+    ]
+  },
+  "versionId": "39fe4188-92d1-4cfd-8e84-31a63376a986",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-13T17:40:16.567Z",
+      "createdAt": "2025-12-13T17:40:16.567Z",
+      "role": "workflow:owner",
+      "workflowId": "SK8YPFtqBFo5lYWl",
+      "projectId": "HZqYjnNmPLW2kkrP",
+      "project": {
+        "updatedAt": "2025-12-12T12:37:29.393Z",
+        "createdAt": "2025-12-12T12:34:20.173Z",
+        "id": "HZqYjnNmPLW2kkrP",
+        "name": "Miguel Simon <miguel.simon@digitalpneuma.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-12-12T12:34:20.173Z",
+            "createdAt": "2025-12-12T12:34:20.173Z",
+            "userId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+            "projectId": "HZqYjnNmPLW2kkrP",
+            "user": {
+              "updatedAt": "2026-01-31T12:34:46.000Z",
+              "createdAt": "2025-12-12T12:34:19.617Z",
+              "id": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+              "email": "miguel.simon@digitalpneuma.com",
+              "firstName": "Miguel",
+              "lastName": "Simon",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-12-12T12:39:28.094Z",
+                "personalization_survey_n8n_version": "1.123.5",
+                "automationGoalDevops": [
+                  "other",
+                  "monitoring-alerting",
+                  "reporting"
+                ],
+                "automationGoalDevopsOther": "Build workflows to automate manual processes",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "GjxXDVv1iBEVBdE4",
+                "userActivatedAt": 1765753766341,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1767113477505
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-01-30",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}
