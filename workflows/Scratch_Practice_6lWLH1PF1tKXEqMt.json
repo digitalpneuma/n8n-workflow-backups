@@ -1,0 +1,487 @@
+{
+  "updatedAt": "2025-09-08T17:10:15.000Z",
+  "createdAt": "2025-09-08T14:13:16.161Z",
+  "id": "6lWLH1PF1tKXEqMt",
+  "name": "Scratch Practice",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        368
+      ],
+      "id": "f6f7293f-1685-4b32-8b83-6abd06ae1128",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://dummyjson.com/products",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -112,
+        -240
+      ],
+      "id": "fb48071f-692f-4b4d-bb91-c4d69a99bbf2",
+      "name": "HTTP Request",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "b565779b-d77a-4248-aea8-576206b59c8e",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -512,
+        -336
+      ],
+      "id": "80decf6f-7825-416c-b453-984d3376c484",
+      "name": "Webhook",
+      "webhookId": "b565779b-d77a-4248-aea8-576206b59c8e",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "resource": "spreadsheet",
+        "title": "Test Document - Delete Later",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -320,
+        48
+      ],
+      "id": "0fcd940d-2c87-40c9-b798-e534c06ffd87",
+      "name": "Create spreadsheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "XhK1JOuJoJ66Xj5X",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"leads\": [\n    {\n      \"firstName\": \"Sarah\",\n      \"lastName\": \"Chen\",\n      \"email\": \"sarah.c@innovatech.com\",\n      \"company\": \"Innovatech Solutions\",\n      \"phoneNumber\": \"(416) 555-0199\",\n      \"source\": \"LinkedIn\",\n      \"status\": \"Contacted\",\n      \"interestLevel\": \"High\",\n      \"notes\": \"Referred by John Smith. Interested in our new AI software. Requested a demo for next week.\",\n      \"dateAdded\": \"2025-09-05\"\n    },\n    {\n      \"firstName\": \"David\",\n      \"lastName\": \"Ramirez\",\n      \"email\": \"dramirez@globalcorp.net\",\n      \"company\": \"GlobalCorp Enterprises\",\n      \"phoneNumber\": \"(647) 555-0245\",\n      \"source\": \"YouTube\",\n      \"status\": \"New\",\n      \"interestLevel\": \"Medium\",\n      \"notes\": \"Commented on our recent tutorial video. Wants more information on pricing tiers.\",\n      \"dateAdded\": \"2025-09-08\"\n    },\n    {\n      \"firstName\": \"Emily\",\n      \"lastName\": \"White\",\n      \"email\": \"emily.w@techforward.org\",\n      \"company\": \"TechForward Inc.\",\n      \"phoneNumber\": \"(905) 555-0112\",\n      \"source\": \"Website Form\",\n      \"status\": \"Follow-up Needed\",\n      \"interestLevel\": \"High\",\n      \"notes\": \"Filled out a contact form asking about custom solutions. Seems like a large potential client.\",\n      \"dateAdded\": \"2025-09-07\"\n    },\n    {\n      \"firstName\": \"Michael\",\n      \"lastName\": \"Patel\",\n      \"email\": \"mpatel@datawave.io\",\n      \"company\": \"Datawave Analytics\",\n      \"phoneNumber\": \"(289) 555-0301\",\n      \"source\": \"Cold Call\",\n      \"status\": \"Nurturing\",\n      \"interestLevel\": \"Low\",\n      \"notes\": \"Not ready to buy yet. Will add to our monthly newsletter list to keep them engaged.\",\n      \"dateAdded\": \"2025-09-03\"\n    },\n    {\n      \"firstName\": \"Jessica\",\n      \"lastName\": \"Lee\",\n      \"email\": \"jlee@solargen.ca\",\n      \"company\": \"SolarGen Solutions\",\n      \"phoneNumber\": \"(705) 555-0158\",\n      \"source\": \"Referral\",\n      \"status\": \"Qualified\",\n      \"interestLevel\": \"Very High\",\n      \"notes\": \"Referred by our existing client, Jessica's manager. Ready to move forward with a proposal.\",\n      \"dateAdded\": \"2025-09-06\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -112,
+        48
+      ],
+      "id": "932d1ac2-2dc7-44b1-a610-baf08b07ce1c",
+      "name": "Edit Fields",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "leads",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        144,
+        48
+      ],
+      "id": "2924f8cd-5709-430f-a1fe-c5fb8e263588",
+      "name": "Split Out",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Create spreadsheet').item.json.spreadsheetId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Id4bS320681JVgTBEmH_dyPL4pe6XczycN7a4IJ2hDc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "firstName",
+              "displayName": "firstName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "lastName",
+              "displayName": "lastName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "phoneNumber",
+              "displayName": "phoneNumber",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "interestLevel",
+              "displayName": "interestLevel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "notes",
+              "displayName": "notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "dateAdded",
+              "displayName": "dateAdded",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "handlingExtraData": "insertInNewColumn"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        352,
+        48
+      ],
+      "id": "75311e92-8a82-41e7-8fdc-cf35d52bd9e6",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "XhK1JOuJoJ66Xj5X",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.input }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Determine if the incoming message is positive or negative.  Return a summary of sentiment and reasoning."
+            }
+          ]
+        },
+        "batching": {
+          "batchSize": 5
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        0,
+        336
+      ],
+      "id": "2dc744de-b877-48bb-aa76-3dc323e416b8",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1da8a02a-ecb3-4709-ad35-3793b3ea74a3",
+              "name": "input",
+              "value": "The customer service is awful",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -368,
+        368
+      ],
+      "id": "a66bb9b5-3391-45b6-a5bb-d2205fb17415",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -96,
+        544
+      ],
+      "id": "71ac2879-8351-4688-8718-f3f9f1675f86",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "IfZ7w9jey4t4KuBS",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"sentiment\": \"Positive\",\n\t\"reasoning\":\"The customer seems enthused about the service\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        128,
+        544
+      ],
+      "id": "850aaaa9-4e21-4922-a5a5-20ab48704064",
+      "name": "Structured Output Parser"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create spreadsheet": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        []
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "36e1123b-d67e-4813-9564-e0634aafcb50",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-13T17:42:58.576Z",
+      "createdAt": "2025-12-13T17:42:58.576Z",
+      "role": "workflow:owner",
+      "workflowId": "6lWLH1PF1tKXEqMt",
+      "projectId": "HZqYjnNmPLW2kkrP",
+      "project": {
+        "updatedAt": "2025-12-12T12:37:29.393Z",
+        "createdAt": "2025-12-12T12:34:20.173Z",
+        "id": "HZqYjnNmPLW2kkrP",
+        "name": "Miguel Simon <miguel.simon@digitalpneuma.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-12-12T12:34:20.173Z",
+            "createdAt": "2025-12-12T12:34:20.173Z",
+            "userId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+            "projectId": "HZqYjnNmPLW2kkrP",
+            "user": {
+              "updatedAt": "2026-01-31T12:34:46.000Z",
+              "createdAt": "2025-12-12T12:34:19.617Z",
+              "id": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+              "email": "miguel.simon@digitalpneuma.com",
+              "firstName": "Miguel",
+              "lastName": "Simon",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-12-12T12:39:28.094Z",
+                "personalization_survey_n8n_version": "1.123.5",
+                "automationGoalDevops": [
+                  "other",
+                  "monitoring-alerting",
+                  "reporting"
+                ],
+                "automationGoalDevopsOther": "Build workflows to automate manual processes",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "GjxXDVv1iBEVBdE4",
+                "userActivatedAt": 1765753766341,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1767113477505
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-01-30",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}
