@@ -1,0 +1,282 @@
+{
+  "updatedAt": "2026-01-12T21:37:25.424Z",
+  "createdAt": "2026-01-12T21:12:30.481Z",
+  "id": "4rirEmeT69pX--hszyxU3",
+  "name": "Form to Google Docs",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "contact-info-form",
+        "formTitle": "Contact Information Form",
+        "formDescription": "Please fill in your contact details",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Address",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.1,
+      "position": [
+        -128,
+        -112
+      ],
+      "id": "ba67e2c9-4b17-4361-913a-a2e6b94c2393",
+      "name": "Form Trigger",
+      "webhookId": "contact-info-form"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "set-name",
+              "name": "name",
+              "type": "string",
+              "value": "={{ $json['Name'] }}"
+            },
+            {
+              "id": "set-email",
+              "name": "email",
+              "type": "string",
+              "value": "={{ $json['Email'] }}"
+            },
+            {
+              "id": "set-address",
+              "name": "address",
+              "type": "string",
+              "value": "={{ $json['Address'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        96,
+        -112
+      ],
+      "id": "88f2a506-e187-4089-951e-6482b1be806f",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "12Y2ZwMHsz_DwLAN7rXVckQ0smQkzUo-e8w-CEuQSZhw",
+          "mode": "list",
+          "cachedResultName": "Simple Test Replace",
+          "cachedResultUrl": "https://docs.google.com/document/d/12Y2ZwMHsz_DwLAN7rXVckQ0smQkzUo-e8w-CEuQSZhw/edit?usp=drivesdk"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        320,
+        -112
+      ],
+      "id": "81301ddc-8c60-4787-962c-cb31a9f2d829",
+      "name": "Get Google Doc",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Ygakna2ZauWyn2Cj",
+          "name": "Google Drive account 2"
+        }
+      },
+      "notes": "Select your template document from Google Drive"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "12Y2ZwMHsz_DwLAN7rXVckQ0smQkzUo-e8w-CEuQSZhw",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "replaceAll",
+              "text": "{{NAME}}",
+              "replaceText": "={{ $json.name }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{EMAIL}}",
+              "replaceText": "={{ $json.email }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{ADDRESS}}",
+              "replaceText": "={{ $json.address }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        544,
+        -112
+      ],
+      "id": "7b906636-40bc-4d2c-b534-025a672bbf6c",
+      "name": "Replace Tags in Google Doc",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "9lyPqKQJ6S2tDsie",
+          "name": "Google Docs account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "=✅ Success!\n\nYour information has been submitted and the document has been updated.\n\n**Details:**\n- Name: {{ $('Edit Fields').item.json.name }}\n- Email: {{ $('Edit Fields').item.json.email }}\n- Address: {{ $('Edit Fields').item.json.address }}\n\nThank you!",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        752,
+        -112
+      ],
+      "id": "1ec20d7f-e6d0-4e68-8ca6-a2de2dacf15a",
+      "name": "Respond to Webhook",
+      "disabled": true
+    }
+  ],
+  "connections": {
+    "Form Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Get Google Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Google Doc": {
+      "main": [
+        [
+          {
+            "node": "Replace Tags in Google Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Tags in Google Doc": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "5df38b01-8f9c-483c-8c23-caa8351bfa44",
+  "activeVersionId": null,
+  "versionCounter": 4,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-12T21:12:30.483Z",
+      "createdAt": "2026-01-12T21:12:30.483Z",
+      "role": "workflow:owner",
+      "workflowId": "4rirEmeT69pX--hszyxU3",
+      "projectId": "HZqYjnNmPLW2kkrP",
+      "project": {
+        "updatedAt": "2025-12-12T12:37:29.393Z",
+        "createdAt": "2025-12-12T12:34:20.173Z",
+        "id": "HZqYjnNmPLW2kkrP",
+        "name": "Miguel Simon <miguel.simon@digitalpneuma.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-12-12T12:34:20.173Z",
+            "createdAt": "2025-12-12T12:34:20.173Z",
+            "userId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+            "projectId": "HZqYjnNmPLW2kkrP",
+            "user": {
+              "updatedAt": "2026-01-31T12:34:46.000Z",
+              "createdAt": "2025-12-12T12:34:19.617Z",
+              "id": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+              "email": "miguel.simon@digitalpneuma.com",
+              "firstName": "Miguel",
+              "lastName": "Simon",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-12-12T12:39:28.094Z",
+                "personalization_survey_n8n_version": "1.123.5",
+                "automationGoalDevops": [
+                  "other",
+                  "monitoring-alerting",
+                  "reporting"
+                ],
+                "automationGoalDevopsOther": "Build workflows to automate manual processes",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "GjxXDVv1iBEVBdE4",
+                "userActivatedAt": 1765753766341,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1767113477505
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-01-30",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}
