@@ -1,0 +1,236 @@
+{
+  "updatedAt": "2025-07-22T11:44:48.000Z",
+  "createdAt": "2025-07-22T02:23:36.108Z",
+  "id": "3CJVZjEJpQkR95Gi",
+  "name": "n8n Masterclass: Customer Orders",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1h3g_hyvopQJiuzFxrpdyHZtu0FWZCC93RU7oUuTkU4o",
+          "mode": "list",
+          "cachedResultName": "Customer Orders",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h3g_hyvopQJiuzFxrpdyHZtu0FWZCC93RU7oUuTkU4o/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h3g_hyvopQJiuzFxrpdyHZtu0FWZCC93RU7oUuTkU4o/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -288,
+        0
+      ],
+      "id": "0fd986e0-b1d5-4be5-95cb-eef1d5a15a7a",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "kPcLtcQ7xk4IbIjD",
+          "name": "Google Sheets Trigger account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are in charge of client orders. Your job is to take incoming information regarding new orders and give a nice summary that will be emailed to the team. The email should be signed off from \"Customer Success Team\".\n\nHere is the information on client orders.\nOrderID: {{ $json.OrderID }}\nCustomer Name: {{ $json.CustomerName }}\nProduct: {{ $json.Product }}\nQuantity: {{ $json.Quantity }}\nPrice: {{ $json.Price }}\nOrder Date: {{ $json.OrderDate }}\nStatus: {{ $json.Status }}\n\nPlease output the following parameters:\nEmail Subject\nEmail Body\n\n",
+              "role": "system"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -80,
+        0
+      ],
+      "id": "127c2144-d422-49dd-a1f2-62d04327431d",
+      "name": "Summarize",
+      "credentials": {
+        "openAiApi": {
+          "id": "IfZ7w9jey4t4KuBS",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "msimon@digitalpneuma.com",
+        "subject": "={{ $json.message.content[\"Email Subject\"] }}",
+        "emailType": "text",
+        "message": "={{ $json.message.content[\"Email Body\"] }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        272,
+        0
+      ],
+      "id": "717cf3db-0159-4971-a3a3-7f5640919fee",
+      "name": "Send a message",
+      "webhookId": "89813401-046d-4240-b08a-98de08e20c5b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "j7HRJjgLfSBAPIzR",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Google Sheets Trigger": {
+      "documentId": "1h3g_hyvopQJiuzFxrpdyHZtu0FWZCC93RU7oUuTkU4o",
+      "sheetId": 0,
+      "lastRevision": 82,
+      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1h3g_hyvopQJiuzFxrpdyHZtu0FWZCC93RU7oUuTkU4o&revision=82&exportFormat=xlsx"
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Google Sheets Trigger": [
+      {
+        "json": {
+          "row_number": 10,
+          "change_type": "updated",
+          "OrderID": 110,
+          "CustomerName": "Carl Sarfi",
+          "Product": "Canon 50",
+          "Quantity": 1,
+          "Price": 750,
+          "OrderDate": "October 26, 2024",
+          "Status": "Delivered"
+        }
+      }
+    ]
+  },
+  "versionId": "b7eb1265-1549-4d2e-8d0d-77be0504ff14",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-12-13T17:43:29.259Z",
+      "createdAt": "2025-12-13T17:43:29.259Z",
+      "role": "workflow:owner",
+      "workflowId": "3CJVZjEJpQkR95Gi",
+      "projectId": "HZqYjnNmPLW2kkrP",
+      "project": {
+        "updatedAt": "2025-12-12T12:37:29.393Z",
+        "createdAt": "2025-12-12T12:34:20.173Z",
+        "id": "HZqYjnNmPLW2kkrP",
+        "name": "Miguel Simon <miguel.simon@digitalpneuma.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-12-12T12:34:20.173Z",
+            "createdAt": "2025-12-12T12:34:20.173Z",
+            "userId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+            "projectId": "HZqYjnNmPLW2kkrP",
+            "user": {
+              "updatedAt": "2026-01-31T12:34:46.000Z",
+              "createdAt": "2025-12-12T12:34:19.617Z",
+              "id": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+              "email": "miguel.simon@digitalpneuma.com",
+              "firstName": "Miguel",
+              "lastName": "Simon",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-12-12T12:39:28.094Z",
+                "personalization_survey_n8n_version": "1.123.5",
+                "automationGoalDevops": [
+                  "other",
+                  "monitoring-alerting",
+                  "reporting"
+                ],
+                "automationGoalDevopsOther": "Build workflows to automate manual processes",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "GjxXDVv1iBEVBdE4",
+                "userActivatedAt": 1765753766341,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1767113477505
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-01-30",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}
