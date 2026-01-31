@@ -1,0 +1,296 @@
+{
+  "updatedAt": "2025-08-14T12:21:33.000Z",
+  "createdAt": "2025-08-14T11:53:00.724Z",
+  "id": "PvihztT4y3VdHsrT",
+  "name": "Agent Outputs",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -160,
+        16
+      ],
+      "id": "fe72189b-c438-4714-86b7-22fc376a090d",
+      "name": "When chat message received",
+      "webhookId": "8e9ec89a-479f-49f6-b6aa-663b7ef03ef4"
+    },
+    {
+      "parameters": {
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "create an email"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        48,
+        16
+      ],
+      "id": "99bde6d3-ae8a-435a-8822-8e26c4b61185",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -96,
+        224
+      ],
+      "id": "65731c84-4bab-4022-851c-9ddc4ffaf2c0",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "IfZ7w9jey4t4KuBS",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\"type\": \"object\",\n\"properties\": {\n\"subject\": {\n\"type\": \"string\",\n\"description\": \"the email subject\"\n},\n\"emailBody\": {\n\"type\": \"string\",\n\"description\": \"the email body\"\n}\n},\n\"required\": [\"subject\", \"emailBody\"]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        400,
+        304
+      ],
+      "id": "b5caaf48-3f87-410a-9bd3-77b680209d70",
+      "name": "Subject & Email"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\"type\": \"object\",\n\"properties\": {\n\"name\": {\n\"type\": \"string\",\n\"description\": \"The full name of the user\"\n},\n\"email\": {\n\"type\": \"string\",\n\"format\": \"email\",\n\"description\": \"The email address of the user\"\n},\n\"bio\": {\n\"type\": \"string\",\n\"description\": \"The bio of the user\"\n}\n},\n\"required\": [\"name\", \"email\", \"bio\"]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        224,
+        272
+      ],
+      "id": "3d20b484-25b7-4180-bbbd-34dd06cfa826",
+      "name": "Structured Output"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1bim3NyQP1jIWyf42QbdhjpFyYOU7qnACfDkfGfW7iiQ",
+          "mode": "list",
+          "cachedResultName": "Agent Outputs",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bim3NyQP1jIWyf42QbdhjpFyYOU7qnACfDkfGfW7iiQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bim3NyQP1jIWyf42QbdhjpFyYOU7qnACfDkfGfW7iiQ/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "name": "={{ $json.output.name }}",
+            "email": "={{ $json.output.email }}",
+            "bio": "={{ $json.output.bio }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "bio",
+              "displayName": "bio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        400,
+        16
+      ],
+      "id": "44f74ea1-d8e0-48cd-a19e-ded4eb336050",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "XhK1JOuJoJ66Xj5X",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output": {
+      "ai_outputParser": [
+        []
+      ]
+    },
+    "Subject & Email": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "397713b4-9f3d-4393-9fb7-ac8bb486eb13",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-13T17:39:45.678Z",
+      "createdAt": "2025-12-13T17:39:45.678Z",
+      "role": "workflow:owner",
+      "workflowId": "PvihztT4y3VdHsrT",
+      "projectId": "HZqYjnNmPLW2kkrP",
+      "project": {
+        "updatedAt": "2025-12-12T12:37:29.393Z",
+        "createdAt": "2025-12-12T12:34:20.173Z",
+        "id": "HZqYjnNmPLW2kkrP",
+        "name": "Miguel Simon <miguel.simon@digitalpneuma.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-12-12T12:34:20.173Z",
+            "createdAt": "2025-12-12T12:34:20.173Z",
+            "userId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+            "projectId": "HZqYjnNmPLW2kkrP",
+            "user": {
+              "updatedAt": "2026-01-31T12:34:46.000Z",
+              "createdAt": "2025-12-12T12:34:19.617Z",
+              "id": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+              "email": "miguel.simon@digitalpneuma.com",
+              "firstName": "Miguel",
+              "lastName": "Simon",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-12-12T12:39:28.094Z",
+                "personalization_survey_n8n_version": "1.123.5",
+                "automationGoalDevops": [
+                  "other",
+                  "monitoring-alerting",
+                  "reporting"
+                ],
+                "automationGoalDevopsOther": "Build workflows to automate manual processes",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "GjxXDVv1iBEVBdE4",
+                "userActivatedAt": 1765753766341,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1767113477505
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-01-30",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}
