@@ -1,0 +1,798 @@
+{
+  "updatedAt": "2026-01-07T00:21:15.272Z",
+  "createdAt": "2026-01-04T21:03:28.739Z",
+  "id": "PzRabNPK8kQ2lBf5",
+  "name": "AI Opportunity Map Generator",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "your-airtable-base-id",
+          "mode": "list",
+          "cachedResultName": "AI Opportunity Leads"
+        },
+        "table": {
+          "__rl": true,
+          "value": "your-table-id",
+          "mode": "list",
+          "cachedResultName": "Leads"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $('Extract Form Data').item.json.email }}",
+            "Process Description": "={{ $('Extract Form Data').item.json.process_description }}",
+            "Timestamp": "={{ $('Extract Form Data').item.json.timestamp }}",
+            "Company Name": "={{ $('Extract Form Data').item.json.company_name }}",
+            "Status": "Report Sent",
+            "Report Sent Date": "={{ $now }}"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "2c37cb6b-9ac4-4881-92c2-426eb048aac0",
+      "name": "Log to Airtable (Optional)",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2,
+      "position": [
+        1408,
+        288
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\n  \"success\": true,\n  \"message\": \"Your AI Opportunity Map is being generated and will be sent to \" + $('Extract Form Data').item.json.email + \" shortly.\",\n  \"email\": $('Extract Form Data').item.json.email\n} }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "2b16b62c-943a-4e62-a8c7-fec7e1421383",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1392,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Extract Form Data').item.json.email }}",
+        "subject": "Your AI Automation Opportunity Map 🚀",
+        "message": "={{ $json.output }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "afee6f9a-e4c7-408f-8256-118998c7984d",
+      "name": "Send Email Report",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1168,
+        0
+      ],
+      "webhookId": "bc5dee17-4fea-4b50-825e-15f31d02b68f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "HrceKf4IdgI6X3ae",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-3.5-sonnet",
+        "options": {
+          "maxTokens": 5000,
+          "temperature": 0.5
+        }
+      },
+      "id": "fae45573-7ceb-4976-8d3c-e9b073578663",
+      "name": "Style Agent - HTML Email",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        736,
+        256
+      ],
+      "credentials": {
+        "openRouterApi": {
+          "id": "WyX9nwHpvjxhVhCH",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-3.5-sonnet",
+        "options": {
+          "maxTokens": 4000,
+          "temperature": 0.7
+        }
+      },
+      "id": "bb49815d-95e5-4170-958b-b72c7ce4532f",
+      "name": "AI Consultant - Analysis",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        384,
+        240
+      ],
+      "credentials": {
+        "openRouterApi": {
+          "id": "WyX9nwHpvjxhVhCH",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "process_description",
+              "name": "process_description",
+              "value": "={{ $json.body.process_description }}",
+              "type": "string"
+            },
+            {
+              "id": "email",
+              "name": "email",
+              "value": "={{ $json.body.email }}",
+              "type": "string"
+            },
+            {
+              "id": "timestamp",
+              "name": "timestamp",
+              "value": "={{ $json.body.timestamp || $now }}",
+              "type": "string"
+            },
+            {
+              "id": "company_name",
+              "name": "company_name",
+              "value": "={{ $json.body.company_name || 'your organization' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "005993ab-c2a1-40c2-a9b3-8af2d29c42f9",
+      "name": "Extract Form Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        224,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ai-opportunity-map",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "4f7676b8-d9e0-459e-9c14-3a225e1d0287",
+      "name": "Webhook - Receive Form Data",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "ai-opportunity-map"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Please analyze this business process and create a comprehensive AI automation opportunity report:\n\n**Business Process Description:**\n{{ $('Extract Form Data').item.json.process_description }}\n\n**Client Email:**\n{{ $('Extract Form Data').item.json.email }}\n\n**Company Name:**\n{{ $('Extract Form Data').item.json.company_name }}",
+        "options": {
+          "systemMessage": "=# CLEAN AI CONSULTANT PROMPT (No HTML Output)\n\n---\n\nYou are an expert AI automation consultant specializing in business process optimization and ROI analysis.\n\nYou will receive a business process description from a potential client. Your task is to analyze their workflow inefficiencies and create a comprehensive automation opportunity report **in pure markdown format**.\n\n**CRITICAL: OUTPUT ONLY MARKDOWN - NO HTML CODE**\n\nDo not include any HTML tags, HTML attributes, or code snippets in your response. Use only plain markdown formatting:\n- Headers: `#`, `##`, `###`\n- Lists: `-` for bullets, `1.` for numbered\n- Tables: `|` pipe format\n- Bold: `**text**`\n- Italic: `*text*`\n\n---\n\n**YOUR ANALYSIS MUST INCLUDE:**\n\n1. **Executive Summary**\n   - Current state assessment with quantified inefficiencies\n   - Proposed solution overview\n   - Expected payback period\n\n2. **Problem Diagnosis** (3-4 key bottlenecks)\n   - Identify specific pain points from their description\n   - Quantify impact where possible (time delays, error rates, costs)\n   - Categorize issues: Sales inefficiencies, Operations bottlenecks, Reporting gaps, etc.\n\n3. **Automation Roadmap** (Tiered approach)\n   \n   **A. Quick Wins (2-4 weeks)**\n   - Initiative name\n   - Tools to use (be specific: \"Zapier\", \"Google Forms + Make\", \"Airtable\", etc.)\n   - Expected outcome with metrics\n   \n   **B. Scalable Solutions (1-3 months)**\n   - Initiative name\n   - Platform/tools (e.g., \"HubSpot CRM + Salesforce\", \"Custom app with FlutterFlow + Supabase\")\n   - Expected outcome with metrics\n   \n   **C. Long-Term Improvements (3-12 months)**\n   - Strategic initiatives\n   - Advanced technologies (AI models, custom development, enterprise platforms)\n   - Transformational outcomes\n\n4. **Estimated ROI Analysis** (Create a markdown table)\n   \n   ```\n   | IMPACT AREA | CURRENT STATE | IMPROVEMENT | MONTHLY SAVINGS |\n   |-------------|---------------|-------------|------------------|\n   | [Area 1]    | [Metric]      | [% improvement] | $[Amount]    |\n   | [Area 2]    | [Metric]      | [% improvement] | $[Amount]    |\n   | [Area 3]    | [Metric]      | [% improvement] | $[Amount]    |\n   ```\n   \n   After the table, include:\n   - **Total Monthly Benefit:** $[X]\n   - **Annual Benefit:** $[Y]\n   - **Implementation Cost:** $[Z] (breakdown: one-time + monthly)\n   - **Payback Period:** [X] months\n   - **First-Year Net Benefit:** $[Amount]\n\n5. **Implementation Timeline** (Create a complete markdown table with 4-6 phases)\n   \n   **YOU MUST COMPLETE THIS TABLE WITH AT LEAST 4-6 ROWS**\n   \n   ```\n   | PHASE | ACTION ITEMS | TIMELINE |\n   |-------|-------------|----------|\n   | Week 1 | - Specific step 1<br>- Specific step 2 | 1 week |\n   | Week 2-4 | - Integration work<br>- Training | 3 weeks |\n   | Month 2 | - Development<br>- Testing | 1 month |\n   | Month 3 | - Rollout<br>- Documentation | 1 month |\n   | Month 4-6 | - Optimization<br>- Measurement | 3 months |\n   ```\n   \n   **CRITICAL RULES FOR THIS TABLE:**\n   - Create at least 4-6 complete rows\n   - Use `<br>` tags to separate multiple action items in a single cell\n   - Complete ALL rows before finishing your response\n   - Do NOT include any HTML code like `<td>`, `<table>`, `style=`, etc.\n   - Use ONLY markdown table syntax with pipes `|`\n\n6. **Next Steps**\n   - Clear call-to-action\n   - Mention discovery call to explore automation strategy\n   - Emphasize the ROI and time-to-value\n\n---\n\n**IMPORTANT GUIDELINES:**\n- Be specific with tool recommendations (actual product names)\n- Use realistic time and cost estimates based on industry standards\n- Include metrics and percentages (e.g., \"30% reduction in quote time\", \"15% fewer errors\")\n- Make ROI calculations conservative but compelling\n- Use professional consulting language\n- Extract company name, industry, and employee count from the description if mentioned\n- If specific numbers aren't in the input, make reasonable estimates based on the business size/type\n\n---\n\n**OUTPUT FORMAT:**\nReturn a detailed markdown-formatted report using ONLY these markdown elements:\n- `#` `##` `###` for headers\n- `-` for bullet points\n- `1.` `2.` for numbered lists\n- `| ... |` for tables\n- `**bold**` for emphasis\n- `<br>` to separate items in table cells (this is the ONLY HTML allowed)\n\n**DO NOT OUTPUT:**\n- ❌ HTML tags like `<table>`, `<td>`, `<div>`, `<p>`, etc.\n- ❌ HTML attributes like `style=`, `class=`, `data-label=`, etc.\n- ❌ Code blocks with \\`\\`\\`html or \\`\\`\\`\n- ❌ Any footer text or signatures\n- ❌ \"---\" separator lines after your report\n\n---\n\n**BEFORE YOU FINISH - CHECKLIST:**\n\n✅ Implementation Timeline table has at least 4-6 complete rows  \n✅ All table cells contain actual data (no HTML code)  \n✅ Used `<br>` tags (not `-`) for multiple items in table cells  \n✅ No HTML tags like `<td>`, `<table>`, `<div>` anywhere in output  \n✅ Report ends with \"Next Steps\" section  \n✅ No footer text or signatures after the report  \n\n---\n\n**EXAMPLE OF CORRECT IMPLEMENTATION TIMELINE TABLE:**\n\n```markdown\n| PHASE | ACTION ITEMS | TIMELINE |\n|-------|-------------|----------|\n| Week 1 | Setup Harvest time tracking<br>Configure Expensify<br>Team training session | 1 week |\n| Week 2-4 | QuickBooks Online integration<br>Stripe payment setup<br>Initial data migration | 3 weeks |\n| Month 2 | Client portal implementation<br>Automated billing workflows<br>Testing phase | 1 month |\n| Month 3-4 | Full team rollout<br>Process documentation<br>Performance monitoring | 2 months |\n| Month 5-6 | Analytics dashboard setup<br>Optimization based on metrics<br>ROI tracking | 2 months |\n```\n\nThis is the format you should use - pure markdown with `<br>` for line breaks inside cells."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        448,
+        0
+      ],
+      "id": "1397d436-54d9-4751-b0b8-1f61b1260808",
+      "name": "AI Consultant"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Convert this COMPLETE automation analysis report into a beautiful HTML email. Include EVERY section, EVERY detail, and ALL content from the report below:\n\n{{ $json.output }}",
+        "options": {
+          "systemMessage": "=# BULLETPROOF SONNET STYLE AGENT\n# Completes ALL sections reliably\n\n---\n\nYou are an HTML email developer. Convert markdown report to HTML email.\n\n**CRITICAL OUTPUT RULES:**\n1. Output pure HTML: Start `<!DOCTYPE html>`, end `</html>`\n2. NO preamble, NO explanations\n3. Convert ALL 6 sections: Executive Summary, Problem Diagnosis, Automation Roadmap, ROI Analysis, Implementation Timeline, Next Steps\n4. Clean HTML code from markdown cells before converting\n5. Output actual HTML tags, NOT escaped entities (use `<p>` not `&lt;p&gt;`)\n\n---\n\n**BEFORE YOU START:**\n- Count sections in markdown (should be 6)\n- Note where \"Next Steps\" section is\n- Plan to convert everything up to and including \"Next Steps\"\n- Ignore \"---\" and \"This email was sent\" after Next Steps\n\n---\n\n## COMPLETE HTML TEMPLATE\n\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>Automation Opportunity Report</title>\n<style>\nbody{margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;background:#f4f7f9}\n.email-wrapper{width:100%;background:#f4f7f9;padding:20px 0}\n.email-container{max-width:800px;margin:0 auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}\n.content{padding:30px}\np{margin:12px 0;line-height:1.6;color:#2d3748;font-size:16px}\nul{margin:10px 0;padding-left:25px}\nli{margin:8px 0;line-height:1.6;color:#2d3748}\nstrong{color:#1a365d;font-weight:700}\n@media only screen and (max-width:800px){\n.email-container{max-width:100%!important;margin:0 10px!important}\n.content{padding:20px!important}\nh1{font-size:24px!important}\nh2{font-size:22px!important}\ntable,thead,tbody,th,td,tr{display:block!important}\nthead tr{position:absolute;top:-9999px;left:-9999px}\ntr{margin-bottom:15px;border:1px solid #e2e8f0}\ntd{padding-left:50%!important;border:none!important;border-bottom:1px solid #e2e8f0!important}\ntd:before{position:absolute;left:10px;width:45%;content:attr(data-label);font-weight:bold;color:#1a365d}\n}\n</style>\n</head>\n<body>\n<div class=\"email-wrapper\">\n<div class=\"email-container\">\n\n<!-- SECTION 1: HEADER -->\n<div style=\"background:#1a365d;padding:40px 30px;text-align:center;border-radius:8px 8px 0 0\">\n<h1 style=\"margin:0 0 10px 0;color:#fff!important;font-size:28px;font-weight:700\">Automation Opportunity Report</h1>\n<p style=\"margin:0 0 8px 0;color:#fff!important;font-size:18px;font-weight:600\">[Company]</p>\n<p style=\"margin:0;color:#e0e7ff!important;font-size:14px\">Prepared for: [Email]</p>\n</div>\n\n<div class=\"content\">\n\n<!-- SECTION 2: EXECUTIVE SUMMARY -->\n<div style=\"background:#f0f4f8;border-left:5px solid #3182ce;padding:22px;margin:20px 0;border-radius:4px\">\n<h3 style=\"margin:0 0 15px 0;color:#1a365d;font-size:20px;font-weight:700\">Executive Summary</h3>\n[Content]\n</div>\n\n<!-- SECTION 3: PROBLEM DIAGNOSIS -->\n<h2 style=\"color:#2b6cb0;font-size:26px;font-weight:700;margin:35px 0 20px 0;padding-bottom:10px;border-bottom:3px solid #2b6cb0\">🔍 Problem Diagnosis</h2>\n[Content]\n\n<!-- SECTION 4: AUTOMATION ROADMAP -->\n<h2 style=\"color:#2b6cb0;font-size:26px;font-weight:700;margin:35px 0 20px 0;padding-bottom:10px;border-bottom:3px solid #2b6cb0\">🗺️ Automation Roadmap</h2>\n\n<div style=\"background:#1a365d;color:#fff;padding:14px 20px;margin:20px 0 15px 0;border-radius:6px\">\n<h3 style=\"margin:0;font-size:18px;font-weight:600\">⚡ A. Quick Wins (2-4 weeks)</h3>\n</div>\n[Initiatives]\n\n<div style=\"background:#1a365d;color:#fff;padding:14px 20px;margin:20px 0 15px 0;border-radius:6px\">\n<h3 style=\"margin:0;font-size:18px;font-weight:600\">🚀 B. Scalable Solutions (1-3 months)</h3>\n</div>\n[Initiatives]\n\n<div style=\"background:#1a365d;color:#fff;padding:14px 20px;margin:20px 0 15px 0;border-radius:6px\">\n<h3 style=\"margin:0;font-size:18px;font-weight:600\">💡 C. Long-Term Improvements (3-12 months)</h3>\n</div>\n[Initiatives]\n\n<!-- SECTION 5: ROI ANALYSIS -->\n<h2 style=\"color:#2b6cb0;font-size:26px;font-weight:700;margin:35px 0 20px 0;padding-bottom:10px;border-bottom:3px solid #2b6cb0\">💰 Estimated ROI Analysis</h2>\n[Table - clean HTML code from cells]\n\n<div style=\"background:#e6ffed;border:3px solid #38a169;padding:25px;text-align:center;margin:25px 0;border-radius:8px\">\n<p style=\"margin:0 0 8px 0;font-size:14px;color:#2d3748;font-weight:600\">💰 ESTIMATED ROI</p>\n<p style=\"margin:0 0 5px 0;font-size:26px;color:#22543d;font-weight:700\">Annual Benefit: $[X]</p>\n<p style=\"margin:0;font-size:18px;color:#2f855a;font-weight:600\">Payback Period: [X] months</p>\n</div>\n[Summary]\n\n<!-- SECTION 6: IMPLEMENTATION TIMELINE -->\n<h2 style=\"color:#2b6cb0;font-size:26px;font-weight:700;margin:35px 0 20px 0;padding-bottom:10px;border-bottom:3px solid #2b6cb0\">⏱️ Implementation Timeline</h2>\n[Table - clean HTML code, infer missing values]\n\n<!-- SECTION 7: NEXT STEPS - CRITICAL: Output as actual HTML, not escaped -->\n<h2 style=\"color:#2b6cb0;font-size:26px;font-weight:700;margin:35px 0 20px 0;padding-bottom:10px;border-bottom:3px solid #2b6cb0\">🎯 Next Steps</h2>\n[Content]\n\n<!-- SECTION 8: CTA -->\n<div style=\"text-align:center;margin:35px 0\">\n<a href=\"https://calendly.com/eagleworldwide/discovery\" style=\"display:inline-block;background:#3182ce;color:#fff;padding:18px 45px;text-decoration:none;border-radius:6px;font-size:18px;font-weight:600\">📅 Schedule Discovery Call</a>\n</div>\n\n<p style=\"font-style:italic;color:#718096;font-size:13px;text-align:center;margin-top:25px\">Note: All calculations based on industry averages. Actual results may vary.</p>\n\n</div>\n\n<!-- SECTION 9: FOOTER - CRITICAL: Output as actual HTML -->\n<div style=\"background:#1a365d;color:#fff;padding:25px 30px;text-align:center\">\n<p style=\"margin:0 0 10px 0;font-weight:600;font-size:15px;color:#fff\">This analysis was generated specifically for your business processes.</p>\n<p style=\"margin:10px 0;color:#e0e7ff\">Questions? Contact us at <a href=\"mailto:automation@eagleworldwide.com\" style=\"color:#90cdf4\">automation@eagleworldwide.com</a></p>\n<p style=\"margin:10px 0 0 0;opacity:0.8;font-size:13px;color:#e0e7ff\">© 2024 Eagle Worldwide Consulting. All rights reserved.</p>\n</div>\n\n</div>\n</div>\n</body>\n</html>\n\n---\n\n## CRITICAL INSTRUCTIONS\n\n**When converting \"Next Steps\" and \"Footer\":**\n- These must be ACTUAL HTML tags: `<h2>`, `<p>`, `<div>`\n- NOT escaped entities: ❌ `&lt;h2&gt;`, ❌ `&lt;p&gt;`\n- NOT visible code text\n\n**If you feel like you're running low on tokens:**\n- Prioritize completing the structure\n- Next Steps can be brief\n- But MUST output the footer HTML properly\n\n**Table cleaning:**\n- Remove `<td`, `style=`, `data-label` from markdown cells\n- Infer missing timeline values (1 week, 1 month, etc.)\n\n**Stop after:**\n- Footer is complete\n- Ignore \"---\", \"This email was sent\", signatures\n\n---\n\n## CHECKLIST BEFORE FINISHING\n\nBefore outputting `</html>`:\n✅ Header with navy background\n✅ Executive Summary light blue box\n✅ Problem Diagnosis converted\n✅ Automation Roadmap (A, B, C) converted\n✅ ROI Analysis table + green box\n✅ Implementation Timeline table\n✅ **Next Steps section as actual HTML** (not escaped)\n✅ CTA button\n✅ **Footer as actual HTML** (not escaped)\n\nYour response is pure HTML from `<!DOCTYPE html>` to `</html>`."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        800,
+        0
+      ],
+      "id": "7bd8fdfa-62e1-4376-8765-6dad346b2433",
+      "name": "Style Agent"
+    },
+    {
+      "parameters": {
+        "content": "## AI Opportunity Roadmap Generator \nConnected to Replit app where client enters pain points and this workflow generates a roadmap for AI integration for great ROI",
+        "width": 336
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        64,
+        -224
+      ],
+      "typeVersion": 1,
+      "id": "28cbc35b-f2b1-40bd-ab1e-32d881faeb4c",
+      "name": "Sticky Note"
+    }
+  ],
+  "connections": {
+    "Send Email Report": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook - Receive Form Data": {
+      "main": [
+        [
+          {
+            "node": "Extract Form Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Form Data": {
+      "main": [
+        [
+          {
+            "node": "AI Consultant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Consultant": {
+      "main": [
+        [
+          {
+            "node": "Style Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Consultant - Analysis": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Consultant",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Style Agent - HTML Email": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Style Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Style Agent": {
+      "main": [
+        [
+          {
+            "node": "Send Email Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook - Receive Form Data": [
+      {
+        "json": {
+          "headers": {
+            "host": "n8n.srv1194543.hstgr.cloud",
+            "user-agent": "node",
+            "content-length": "429",
+            "accept": "*/*",
+            "accept-encoding": "br, gzip, deflate",
+            "accept-language": "*",
+            "content-type": "application/json",
+            "sec-fetch-mode": "cors",
+            "x-forwarded-for": "34.63.21.104",
+            "x-forwarded-host": "n8n.srv1194543.hstgr.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "bf1dc3292ed0",
+            "x-real-ip": "34.63.21.104"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "process_description": "Our consulting firm has 8 consultants who manually track time in Excel, submit expense reports via email, and I compile everything into invoices each month. Client billing takes me 3 days per month, and we often miss billable hours because people forget to log them. We also manually follow up with clients for invoice payments.",
+            "email": "msimon@eagleworldwide.com",
+            "timestamp": "2026-01-04T22:10:44.315Z"
+          },
+          "webhookUrl": "https://n8n.srv1194543.hstgr.cloud/webhook/ai-opportunity-map",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "404b8542-da93-46fb-919b-f7a5ff4f0fed",
+  "activeVersionId": "404b8542-da93-46fb-919b-f7a5ff4f0fed",
+  "versionCounter": 66,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-04T21:03:28.741Z",
+      "createdAt": "2026-01-04T21:03:28.741Z",
+      "role": "workflow:owner",
+      "workflowId": "PzRabNPK8kQ2lBf5",
+      "projectId": "HZqYjnNmPLW2kkrP",
+      "project": {
+        "updatedAt": "2025-12-12T12:37:29.393Z",
+        "createdAt": "2025-12-12T12:34:20.173Z",
+        "id": "HZqYjnNmPLW2kkrP",
+        "name": "Miguel Simon <miguel.simon@digitalpneuma.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-12-12T12:34:20.173Z",
+            "createdAt": "2025-12-12T12:34:20.173Z",
+            "userId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+            "projectId": "HZqYjnNmPLW2kkrP",
+            "user": {
+              "updatedAt": "2026-01-31T12:34:46.000Z",
+              "createdAt": "2025-12-12T12:34:19.617Z",
+              "id": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+              "email": "miguel.simon@digitalpneuma.com",
+              "firstName": "Miguel",
+              "lastName": "Simon",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-12-12T12:39:28.094Z",
+                "personalization_survey_n8n_version": "1.123.5",
+                "automationGoalDevops": [
+                  "other",
+                  "monitoring-alerting",
+                  "reporting"
+                ],
+                "automationGoalDevopsOther": "Build workflows to automate manual processes",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "GjxXDVv1iBEVBdE4",
+                "userActivatedAt": 1765753766341,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1767113477505
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-01-30",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-01-07T00:21:15.273Z",
+    "createdAt": "2026-01-07T00:21:15.273Z",
+    "versionId": "404b8542-da93-46fb-919b-f7a5ff4f0fed",
+    "workflowId": "PzRabNPK8kQ2lBf5",
+    "nodes": [
+      {
+        "parameters": {
+          "operation": "create",
+          "base": {
+            "__rl": true,
+            "value": "your-airtable-base-id",
+            "mode": "list",
+            "cachedResultName": "AI Opportunity Leads"
+          },
+          "table": {
+            "__rl": true,
+            "value": "your-table-id",
+            "mode": "list",
+            "cachedResultName": "Leads"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Email": "={{ $('Extract Form Data').item.json.email }}",
+              "Process Description": "={{ $('Extract Form Data').item.json.process_description }}",
+              "Timestamp": "={{ $('Extract Form Data').item.json.timestamp }}",
+              "Company Name": "={{ $('Extract Form Data').item.json.company_name }}",
+              "Status": "Report Sent",
+              "Report Sent Date": "={{ $now }}"
+            },
+            "matchingColumns": [],
+            "schema": []
+          },
+          "options": {}
+        },
+        "id": "2c37cb6b-9ac4-4881-92c2-426eb048aac0",
+        "name": "Log to Airtable (Optional)",
+        "type": "n8n-nodes-base.airtable",
+        "typeVersion": 2,
+        "position": [
+          1408,
+          288
+        ],
+        "disabled": true
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ {\n  \"success\": true,\n  \"message\": \"Your AI Opportunity Map is being generated and will be sent to \" + $('Extract Form Data').item.json.email + \" shortly.\",\n  \"email\": $('Extract Form Data').item.json.email\n} }}",
+          "options": {
+            "responseCode": 200,
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "*"
+                }
+              ]
+            }
+          }
+        },
+        "id": "2b16b62c-943a-4e62-a8c7-fec7e1421383",
+        "name": "Respond to Webhook",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          1392,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "sendTo": "={{ $('Extract Form Data').item.json.email }}",
+          "subject": "Your AI Automation Opportunity Map 🚀",
+          "message": "={{ $json.output }}",
+          "options": {
+            "appendAttribution": false
+          }
+        },
+        "id": "afee6f9a-e4c7-408f-8256-118998c7984d",
+        "name": "Send Email Report",
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.1,
+        "position": [
+          1168,
+          0
+        ],
+        "webhookId": "bc5dee17-4fea-4b50-825e-15f31d02b68f",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "HrceKf4IdgI6X3ae",
+            "name": "Gmail account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "model": "anthropic/claude-3.5-sonnet",
+          "options": {
+            "maxTokens": 5000,
+            "temperature": 0.5
+          }
+        },
+        "id": "fae45573-7ceb-4976-8d3c-e9b073578663",
+        "name": "Style Agent - HTML Email",
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+        "typeVersion": 1,
+        "position": [
+          736,
+          256
+        ],
+        "credentials": {
+          "openRouterApi": {
+            "id": "WyX9nwHpvjxhVhCH",
+            "name": "OpenRouter account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "model": "anthropic/claude-3.5-sonnet",
+          "options": {
+            "maxTokens": 4000,
+            "temperature": 0.7
+          }
+        },
+        "id": "bb49815d-95e5-4170-958b-b72c7ce4532f",
+        "name": "AI Consultant - Analysis",
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+        "typeVersion": 1,
+        "position": [
+          384,
+          240
+        ],
+        "credentials": {
+          "openRouterApi": {
+            "id": "WyX9nwHpvjxhVhCH",
+            "name": "OpenRouter account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "process_description",
+                "name": "process_description",
+                "value": "={{ $json.body.process_description }}",
+                "type": "string"
+              },
+              {
+                "id": "email",
+                "name": "email",
+                "value": "={{ $json.body.email }}",
+                "type": "string"
+              },
+              {
+                "id": "timestamp",
+                "name": "timestamp",
+                "value": "={{ $json.body.timestamp || $now }}",
+                "type": "string"
+              },
+              {
+                "id": "company_name",
+                "name": "company_name",
+                "value": "={{ $json.body.company_name || 'your organization' }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "005993ab-c2a1-40c2-a9b3-8af2d29c42f9",
+        "name": "Extract Form Data",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.3,
+        "position": [
+          224,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "ai-opportunity-map",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "id": "4f7676b8-d9e0-459e-9c14-3a225e1d0287",
+        "name": "Webhook - Receive Form Data",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          0,
+          0
+        ],
+        "webhookId": "ai-opportunity-map"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Please analyze this business process and create a comprehensive AI automation opportunity report:\n\n**Business Process Description:**\n{{ $('Extract Form Data').item.json.process_description }}\n\n**Client Email:**\n{{ $('Extract Form Data').item.json.email }}\n\n**Company Name:**\n{{ $('Extract Form Data').item.json.company_name }}",
+          "options": {
+            "systemMessage": "=# CLEAN AI CONSULTANT PROMPT (No HTML Output)\n\n---\n\nYou are an expert AI automation consultant specializing in business process optimization and ROI analysis.\n\nYou will receive a business process description from a potential client. Your task is to analyze their workflow inefficiencies and create a comprehensive automation opportunity report **in pure markdown format**.\n\n**CRITICAL: OUTPUT ONLY MARKDOWN - NO HTML CODE**\n\nDo not include any HTML tags, HTML attributes, or code snippets in your response. Use only plain markdown formatting:\n- Headers: `#`, `##`, `###`\n- Lists: `-` for bullets, `1.` for numbered\n- Tables: `|` pipe format\n- Bold: `**text**`\n- Italic: `*text*`\n\n---\n\n**YOUR ANALYSIS MUST INCLUDE:**\n\n1. **Executive Summary**\n   - Current state assessment with quantified inefficiencies\n   - Proposed solution overview\n   - Expected payback period\n\n2. **Problem Diagnosis** (3-4 key bottlenecks)\n   - Identify specific pain points from their description\n   - Quantify impact where possible (time delays, error rates, costs)\n   - Categorize issues: Sales inefficiencies, Operations bottlenecks, Reporting gaps, etc.\n\n3. **Automation Roadmap** (Tiered approach)\n   \n   **A. Quick Wins (2-4 weeks)**\n   - Initiative name\n   - Tools to use (be specific: \"Zapier\", \"Google Forms + Make\", \"Airtable\", etc.)\n   - Expected outcome with metrics\n   \n   **B. Scalable Solutions (1-3 months)**\n   - Initiative name\n   - Platform/tools (e.g., \"HubSpot CRM + Salesforce\", \"Custom app with FlutterFlow + Supabase\")\n   - Expected outcome with metrics\n   \n   **C. Long-Term Improvements (3-12 months)**\n   - Strategic initiatives\n   - Advanced technologies (AI models, custom development, enterprise platforms)\n   - Transformational outcomes\n\n4. **Estimated ROI Analysis** (Create a markdown table)\n   \n   ```\n   | IMPACT AREA | CURRENT STATE | IMPROVEMENT | MONTHLY SAVINGS |\n   |-------------|---------------|-------------|------------------|\n   | [Area 1]    | [Metric]      | [% improvement] | $[Amount]    |\n   | [Area 2]    | [Metric]      | [% improvement] | $[Amount]    |\n   | [Area 3]    | [Metric]      | [% improvement] | $[Amount]    |\n   ```\n   \n   After the table, include:\n   - **Total Monthly Benefit:** $[X]\n   - **Annual Benefit:** $[Y]\n   - **Implementation Cost:** $[Z] (breakdown: one-time + monthly)\n   - **Payback Period:** [X] months\n   - **First-Year Net Benefit:** $[Amount]\n\n5. **Implementation Timeline** (Create a complete markdown table with 4-6 phases)\n   \n   **YOU MUST COMPLETE THIS TABLE WITH AT LEAST 4-6 ROWS**\n   \n   ```\n   | PHASE | ACTION ITEMS | TIMELINE |\n   |-------|-------------|----------|\n   | Week 1 | - Specific step 1<br>- Specific step 2 | 1 week |\n   | Week 2-4 | - Integration work<br>- Training | 3 weeks |\n   | Month 2 | - Development<br>- Testing | 1 month |\n   | Month 3 | - Rollout<br>- Documentation | 1 month |\n   | Month 4-6 | - Optimization<br>- Measurement | 3 months |\n   ```\n   \n   **CRITICAL RULES FOR THIS TABLE:**\n   - Create at least 4-6 complete rows\n   - Use `<br>` tags to separate multiple action items in a single cell\n   - Complete ALL rows before finishing your response\n   - Do NOT include any HTML code like `<td>`, `<table>`, `style=`, etc.\n   - Use ONLY markdown table syntax with pipes `|`\n\n6. **Next Steps**\n   - Clear call-to-action\n   - Mention discovery call to explore automation strategy\n   - Emphasize the ROI and time-to-value\n\n---\n\n**IMPORTANT GUIDELINES:**\n- Be specific with tool recommendations (actual product names)\n- Use realistic time and cost estimates based on industry standards\n- Include metrics and percentages (e.g., \"30% reduction in quote time\", \"15% fewer errors\")\n- Make ROI calculations conservative but compelling\n- Use professional consulting language\n- Extract company name, industry, and employee count from the description if mentioned\n- If specific numbers aren't in the input, make reasonable estimates based on the business size/type\n\n---\n\n**OUTPUT FORMAT:**\nReturn a detailed markdown-formatted report using ONLY these markdown elements:\n- `#` `##` `###` for headers\n- `-` for bullet points\n- `1.` `2.` for numbered lists\n- `| ... |` for tables\n- `**bold**` for emphasis\n- `<br>` to separate items in table cells (this is the ONLY HTML allowed)\n\n**DO NOT OUTPUT:**\n- ❌ HTML tags like `<table>`, `<td>`, `<div>`, `<p>`, etc.\n- ❌ HTML attributes like `style=`, `class=`, `data-label=`, etc.\n- ❌ Code blocks with \\`\\`\\`html or \\`\\`\\`\n- ❌ Any footer text or signatures\n- ❌ \"---\" separator lines after your report\n\n---\n\n**BEFORE YOU FINISH - CHECKLIST:**\n\n✅ Implementation Timeline table has at least 4-6 complete rows  \n✅ All table cells contain actual data (no HTML code)  \n✅ Used `<br>` tags (not `-`) for multiple items in table cells  \n✅ No HTML tags like `<td>`, `<table>`, `<div>` anywhere in output  \n✅ Report ends with \"Next Steps\" section  \n✅ No footer text or signatures after the report  \n\n---\n\n**EXAMPLE OF CORRECT IMPLEMENTATION TIMELINE TABLE:**\n\n```markdown\n| PHASE | ACTION ITEMS | TIMELINE |\n|-------|-------------|----------|\n| Week 1 | Setup Harvest time tracking<br>Configure Expensify<br>Team training session | 1 week |\n| Week 2-4 | QuickBooks Online integration<br>Stripe payment setup<br>Initial data migration | 3 weeks |\n| Month 2 | Client portal implementation<br>Automated billing workflows<br>Testing phase | 1 month |\n| Month 3-4 | Full team rollout<br>Process documentation<br>Performance monitoring | 2 months |\n| Month 5-6 | Analytics dashboard setup<br>Optimization based on metrics<br>ROI tracking | 2 months |\n```\n\nThis is the format you should use - pure markdown with `<br>` for line breaks inside cells."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 3,
+        "position": [
+          448,
+          0
+        ],
+        "id": "1397d436-54d9-4751-b0b8-1f61b1260808",
+        "name": "AI Consultant"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Convert this COMPLETE automation analysis report into a beautiful HTML email. Include EVERY section, EVERY detail, and ALL content from the report below:\n\n{{ $json.output }}",
+          "options": {
+            "systemMessage": "=# BULLETPROOF SONNET STYLE AGENT\n# Completes ALL sections reliably\n\n---\n\nYou are an HTML email developer. Convert markdown report to HTML email.\n\n**CRITICAL OUTPUT RULES:**\n1. Output pure HTML: Start `<!DOCTYPE html>`, end `</html>`\n2. NO preamble, NO explanations\n3. Convert ALL 6 sections: Executive Summary, Problem Diagnosis, Automation Roadmap, ROI Analysis, Implementation Timeline, Next Steps\n4. Clean HTML code from markdown cells before converting\n5. Output actual HTML tags, NOT escaped entities (use `<p>` not `&lt;p&gt;`)\n\n---\n\n**BEFORE YOU START:**\n- Count sections in markdown (should be 6)\n- Note where \"Next Steps\" section is\n- Plan to convert everything up to and including \"Next Steps\"\n- Ignore \"---\" and \"This email was sent\" after Next Steps\n\n---\n\n## COMPLETE HTML TEMPLATE\n\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>Automation Opportunity Report</title>\n<style>\nbody{margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;background:#f4f7f9}\n.email-wrapper{width:100%;background:#f4f7f9;padding:20px 0}\n.email-container{max-width:800px;margin:0 auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}\n.content{padding:30px}\np{margin:12px 0;line-height:1.6;color:#2d3748;font-size:16px}\nul{margin:10px 0;padding-left:25px}\nli{margin:8px 0;line-height:1.6;color:#2d3748}\nstrong{color:#1a365d;font-weight:700}\n@media only screen and (max-width:800px){\n.email-container{max-width:100%!important;margin:0 10px!important}\n.content{padding:20px!important}\nh1{font-size:24px!important}\nh2{font-size:22px!important}\ntable,thead,tbody,th,td,tr{display:block!important}\nthead tr{position:absolute;top:-9999px;left:-9999px}\ntr{margin-bottom:15px;border:1px solid #e2e8f0}\ntd{padding-left:50%!important;border:none!important;border-bottom:1px solid #e2e8f0!important}\ntd:before{position:absolute;left:10px;width:45%;content:attr(data-label);font-weight:bold;color:#1a365d}\n}\n</style>\n</head>\n<body>\n<div class=\"email-wrapper\">\n<div class=\"email-container\">\n\n<!-- SECTION 1: HEADER -->\n<div style=\"background:#1a365d;padding:40px 30px;text-align:center;border-radius:8px 8px 0 0\">\n<h1 style=\"margin:0 0 10px 0;color:#fff!important;font-size:28px;font-weight:700\">Automation Opportunity Report</h1>\n<p style=\"margin:0 0 8px 0;color:#fff!important;font-size:18px;font-weight:600\">[Company]</p>\n<p style=\"margin:0;color:#e0e7ff!important;font-size:14px\">Prepared for: [Email]</p>\n</div>\n\n<div class=\"content\">\n\n<!-- SECTION 2: EXECUTIVE SUMMARY -->\n<div style=\"background:#f0f4f8;border-left:5px solid #3182ce;padding:22px;margin:20px 0;border-radius:4px\">\n<h3 style=\"margin:0 0 15px 0;color:#1a365d;font-size:20px;font-weight:700\">Executive Summary</h3>\n[Content]\n</div>\n\n<!-- SECTION 3: PROBLEM DIAGNOSIS -->\n<h2 style=\"color:#2b6cb0;font-size:26px;font-weight:700;margin:35px 0 20px 0;padding-bottom:10px;border-bottom:3px solid #2b6cb0\">🔍 Problem Diagnosis</h2>\n[Content]\n\n<!-- SECTION 4: AUTOMATION ROADMAP -->\n<h2 style=\"color:#2b6cb0;font-size:26px;font-weight:700;margin:35px 0 20px 0;padding-bottom:10px;border-bottom:3px solid #2b6cb0\">🗺️ Automation Roadmap</h2>\n\n<div style=\"background:#1a365d;color:#fff;padding:14px 20px;margin:20px 0 15px 0;border-radius:6px\">\n<h3 style=\"margin:0;font-size:18px;font-weight:600\">⚡ A. Quick Wins (2-4 weeks)</h3>\n</div>\n[Initiatives]\n\n<div style=\"background:#1a365d;color:#fff;padding:14px 20px;margin:20px 0 15px 0;border-radius:6px\">\n<h3 style=\"margin:0;font-size:18px;font-weight:600\">🚀 B. Scalable Solutions (1-3 months)</h3>\n</div>\n[Initiatives]\n\n<div style=\"background:#1a365d;color:#fff;padding:14px 20px;margin:20px 0 15px 0;border-radius:6px\">\n<h3 style=\"margin:0;font-size:18px;font-weight:600\">💡 C. Long-Term Improvements (3-12 months)</h3>\n</div>\n[Initiatives]\n\n<!-- SECTION 5: ROI ANALYSIS -->\n<h2 style=\"color:#2b6cb0;font-size:26px;font-weight:700;margin:35px 0 20px 0;padding-bottom:10px;border-bottom:3px solid #2b6cb0\">💰 Estimated ROI Analysis</h2>\n[Table - clean HTML code from cells]\n\n<div style=\"background:#e6ffed;border:3px solid #38a169;padding:25px;text-align:center;margin:25px 0;border-radius:8px\">\n<p style=\"margin:0 0 8px 0;font-size:14px;color:#2d3748;font-weight:600\">💰 ESTIMATED ROI</p>\n<p style=\"margin:0 0 5px 0;font-size:26px;color:#22543d;font-weight:700\">Annual Benefit: $[X]</p>\n<p style=\"margin:0;font-size:18px;color:#2f855a;font-weight:600\">Payback Period: [X] months</p>\n</div>\n[Summary]\n\n<!-- SECTION 6: IMPLEMENTATION TIMELINE -->\n<h2 style=\"color:#2b6cb0;font-size:26px;font-weight:700;margin:35px 0 20px 0;padding-bottom:10px;border-bottom:3px solid #2b6cb0\">⏱️ Implementation Timeline</h2>\n[Table - clean HTML code, infer missing values]\n\n<!-- SECTION 7: NEXT STEPS - CRITICAL: Output as actual HTML, not escaped -->\n<h2 style=\"color:#2b6cb0;font-size:26px;font-weight:700;margin:35px 0 20px 0;padding-bottom:10px;border-bottom:3px solid #2b6cb0\">🎯 Next Steps</h2>\n[Content]\n\n<!-- SECTION 8: CTA -->\n<div style=\"text-align:center;margin:35px 0\">\n<a href=\"https://calendly.com/eagleworldwide/discovery\" style=\"display:inline-block;background:#3182ce;color:#fff;padding:18px 45px;text-decoration:none;border-radius:6px;font-size:18px;font-weight:600\">📅 Schedule Discovery Call</a>\n</div>\n\n<p style=\"font-style:italic;color:#718096;font-size:13px;text-align:center;margin-top:25px\">Note: All calculations based on industry averages. Actual results may vary.</p>\n\n</div>\n\n<!-- SECTION 9: FOOTER - CRITICAL: Output as actual HTML -->\n<div style=\"background:#1a365d;color:#fff;padding:25px 30px;text-align:center\">\n<p style=\"margin:0 0 10px 0;font-weight:600;font-size:15px;color:#fff\">This analysis was generated specifically for your business processes.</p>\n<p style=\"margin:10px 0;color:#e0e7ff\">Questions? Contact us at <a href=\"mailto:automation@eagleworldwide.com\" style=\"color:#90cdf4\">automation@eagleworldwide.com</a></p>\n<p style=\"margin:10px 0 0 0;opacity:0.8;font-size:13px;color:#e0e7ff\">© 2024 Eagle Worldwide Consulting. All rights reserved.</p>\n</div>\n\n</div>\n</div>\n</body>\n</html>\n\n---\n\n## CRITICAL INSTRUCTIONS\n\n**When converting \"Next Steps\" and \"Footer\":**\n- These must be ACTUAL HTML tags: `<h2>`, `<p>`, `<div>`\n- NOT escaped entities: ❌ `&lt;h2&gt;`, ❌ `&lt;p&gt;`\n- NOT visible code text\n\n**If you feel like you're running low on tokens:**\n- Prioritize completing the structure\n- Next Steps can be brief\n- But MUST output the footer HTML properly\n\n**Table cleaning:**\n- Remove `<td`, `style=`, `data-label` from markdown cells\n- Infer missing timeline values (1 week, 1 month, etc.)\n\n**Stop after:**\n- Footer is complete\n- Ignore \"---\", \"This email was sent\", signatures\n\n---\n\n## CHECKLIST BEFORE FINISHING\n\nBefore outputting `</html>`:\n✅ Header with navy background\n✅ Executive Summary light blue box\n✅ Problem Diagnosis converted\n✅ Automation Roadmap (A, B, C) converted\n✅ ROI Analysis table + green box\n✅ Implementation Timeline table\n✅ **Next Steps section as actual HTML** (not escaped)\n✅ CTA button\n✅ **Footer as actual HTML** (not escaped)\n\nYour response is pure HTML from `<!DOCTYPE html>` to `</html>`."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 3,
+        "position": [
+          800,
+          0
+        ],
+        "id": "7bd8fdfa-62e1-4376-8765-6dad346b2433",
+        "name": "Style Agent"
+      },
+      {
+        "parameters": {
+          "content": "## AI Opportunity Roadmap Generator \nConnected to Replit app where client enters pain points and this workflow generates a roadmap for AI integration for great ROI",
+          "width": 336
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          64,
+          -224
+        ],
+        "typeVersion": 1,
+        "id": "28cbc35b-f2b1-40bd-ab1e-32d881faeb4c",
+        "name": "Sticky Note"
+      }
+    ],
+    "connections": {
+      "Send Email Report": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Webhook - Receive Form Data": {
+        "main": [
+          [
+            {
+              "node": "Extract Form Data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract Form Data": {
+        "main": [
+          [
+            {
+              "node": "AI Consultant",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Consultant": {
+        "main": [
+          [
+            {
+              "node": "Style Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Consultant - Analysis": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Consultant",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Style Agent - HTML Email": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Style Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Style Agent": {
+        "main": [
+          [
+            {
+              "node": "Send Email Report",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Miguel Simon",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-01-07T00:21:15.363Z",
+        "id": 123,
+        "workflowId": "PzRabNPK8kQ2lBf5",
+        "versionId": "404b8542-da93-46fb-919b-f7a5ff4f0fed",
+        "event": "activated",
+        "userId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586"
+      }
+    ]
+  }
+}
