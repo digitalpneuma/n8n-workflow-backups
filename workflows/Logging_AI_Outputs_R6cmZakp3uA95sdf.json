@@ -1,0 +1,824 @@
+{
+  "updatedAt": "2025-09-12T12:17:30.000Z",
+  "createdAt": "2025-09-12T12:08:21.044Z",
+  "id": "R6cmZakp3uA95sdf",
+  "name": "Logging AI Outputs",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -496,
+        352
+      ],
+      "id": "40df9918-6c96-4808-80f1-03bfd03f304d",
+      "name": "4.1-mini",
+      "credentials": {
+        "openRouterApi": {
+          "id": "O4Ms8iUOOIP77I0Z",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": true
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -320,
+        352
+      ],
+      "id": "14bc64b0-022b-4f7f-a387-f7580a216a19",
+      "name": "Send Email",
+      "webhookId": "18eaba1a-1821-4b08-b623-7496a908f4d3",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "j7HRJjgLfSBAPIzR",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "app52gw2E0NQelq9N",
+          "mode": "list",
+          "cachedResultName": "Contacts",
+          "cachedResultUrl": "https://airtable.com/app52gw2E0NQelq9N"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbll3fQAZ4e4oqcl2",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/app52gw2E0NQelq9N/tbll3fQAZ4e4oqcl2"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        -224,
+        352
+      ],
+      "id": "710d601e-8722-4bcd-b625-f54cfbc58be4",
+      "name": "Get Contacts",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "n97nuRFVyl6Ii18g",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "144h5vN3d_SsZMNkZncQAKMrwJ3wkceUEq47dO7FwLyA",
+          "mode": "list",
+          "cachedResultName": "Agent Logs",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/144h5vN3d_SsZMNkZncQAKMrwJ3wkceUEq47dO7FwLyA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/144h5vN3d_SsZMNkZncQAKMrwJ3wkceUEq47dO7FwLyA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $now.format('D hh:mm a') }}",
+            "Workflow": "={{ $workflow.name }}",
+            "Input": "={{ $('Telegram Trigger').item.json.message.text }}",
+            "Output": "={{ $('AI Agent').item.json.output }}",
+            "Actions": "={{ JSON.stringify($json.steps, null, 2) }}",
+            "Tokens": "={{ JSON.stringify($json.tokens, null, 2) }}",
+            "Total Cost": "={{ $json.total_cost }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Workflow",
+              "displayName": "Workflow",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Input",
+              "displayName": "Input",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Output",
+              "displayName": "Output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Error Message",
+              "displayName": "Error Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Actions",
+              "displayName": "Actions",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tokens",
+              "displayName": "Tokens",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Total Cost",
+              "displayName": "Total Cost",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        224,
+        80
+      ],
+      "id": "fda6c543-3157-4617-b605-fd4c89d88008",
+      "name": "Log",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "lFRYvTqJFto1ZDyU",
+          "name": "Google Sheets Account NEW"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "nateherk88@gmail.com",
+          "mode": "list",
+          "cachedResultName": "nateherk88@gmail.com"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "additionalFields": {
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -128,
+        352
+      ],
+      "id": "0f39b7d3-e7cb-46bd-8a52-4953f057046d",
+      "name": "Create Event",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "gSJswHRj22POuVsl",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Initialize the output arrays\nconst steps = [];\nconst tokens = [];\nlet totalCost = 0; // Add this to track the total cost\n\n// Process each item in the input\nfor (const item of $input.all()) {\n  let data = item.json;\n  \n  // Check if the data is an array itself (like your example JSON)\n  if (Array.isArray(data)) {\n    // Process each object in the array\n    for (const obj of data) {\n      // Extract steps information\n      if (obj.intermediateSteps && Array.isArray(obj.intermediateSteps)) {\n        for (const step of obj.intermediateSteps) {\n          if (step.action) {\n            steps.push({\n              tool: step.action.tool,\n              toolInput: step.action.toolInput,\n              observation: step.observation\n            });\n          }\n        }\n      }\n      \n      // Extract token and cost information\n      if (obj.intermediateSteps && Array.isArray(obj.intermediateSteps)) {\n        for (const step of obj.intermediateSteps) {\n          if (step.action && step.action.messageLog && Array.isArray(step.action.messageLog)) {\n            for (const message of step.action.messageLog) {\n              if (message.kwargs && message.kwargs.response_metadata && message.kwargs.response_metadata.usage) {\n                const usage = message.kwargs.response_metadata.usage;\n                tokens.push({\n                  prompt_tokens: usage.prompt_tokens,\n                  completion_tokens: usage.completion_tokens,\n                  total_tokens: usage.total_tokens,\n                  cost: usage.cost,\n                  model_name: message.kwargs.response_metadata.model_name\n                });\n                \n                // Add the cost to our running total\n                if (typeof usage.cost === 'number') {\n                  totalCost += usage.cost;\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  } else {\n    // If data is not an array, process it as a single object\n    // Extract steps information\n    if (data.intermediateSteps && Array.isArray(data.intermediateSteps)) {\n      for (const step of data.intermediateSteps) {\n        if (step.action) {\n          steps.push({\n            tool: step.action.tool,\n            toolInput: step.action.toolInput,\n            observation: step.observation\n          });\n        }\n      }\n    }\n    \n    // Extract token and cost information\n    if (data.intermediateSteps && Array.isArray(data.intermediateSteps)) {\n      for (const step of data.intermediateSteps) {\n        if (step.action && step.action.messageLog && Array.isArray(step.action.messageLog)) {\n          for (const message of step.action.messageLog) {\n            if (message.kwargs && message.kwargs.response_metadata && message.kwargs.response_metadata.usage) {\n              const usage = message.kwargs.response_metadata.usage;\n              tokens.push({\n                prompt_tokens: usage.prompt_tokens,\n                completion_tokens: usage.completion_tokens,\n                total_tokens: usage.total_tokens,\n                cost: usage.cost,\n                model_name: message.kwargs.response_metadata.model_name\n              });\n              \n              // Add the cost to our running total\n              if (typeof usage.cost === 'number') {\n                totalCost += usage.cost;\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n\n// Return the processed data with total_cost included\nreturn [{\n  json: {\n    steps: steps,\n    tokens: tokens,\n    total_cost: totalCost\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        80
+      ],
+      "id": "e73b4e96-9230-4fd9-8ffc-b7d55c4d7e4d",
+      "name": "Clean Up"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "144h5vN3d_SsZMNkZncQAKMrwJ3wkceUEq47dO7FwLyA",
+          "mode": "list",
+          "cachedResultName": "Agent Logs",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/144h5vN3d_SsZMNkZncQAKMrwJ3wkceUEq47dO7FwLyA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/144h5vN3d_SsZMNkZncQAKMrwJ3wkceUEq47dO7FwLyA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $now.format('D hh:mm a') }}",
+            "Workflow": "={{ $workflow.name }}",
+            "Output": "ERROR",
+            "Input": "={{ $('Telegram Trigger').item.json.message.text }}",
+            "Total Cost": "={{ $json.total_cost }}",
+            "Tokens": "={{ JSON.stringify($json.tokens, null, 2) }}",
+            "Actions": "={{ JSON.stringify($json.steps, null, 2) }}",
+            "Error Message": "={{ $('AI Agent').item.json.error }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Workflow",
+              "displayName": "Workflow",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Input",
+              "displayName": "Input",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Output",
+              "displayName": "Output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Error Message",
+              "displayName": "Error Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Actions",
+              "displayName": "Actions",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tokens",
+              "displayName": "Tokens",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Total Cost",
+              "displayName": "Total Cost",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        224,
+        352
+      ],
+      "id": "d9a139bc-8003-4699-b2b1-13ce91fa8821",
+      "name": "Errors",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "lFRYvTqJFto1ZDyU",
+          "name": "Google Sheets Account NEW"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -544,
+        112
+      ],
+      "id": "ff3310a6-aae0-48dc-bac7-fc3be1a5a739",
+      "name": "Telegram Trigger",
+      "webhookId": "dcfa2f69-f5d4-4f3d-926f-d14f6e3e59f3",
+      "credentials": {
+        "telegramApi": {
+          "id": "XNG9U5mgUP8svlLb",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "=Error: {{ $('AI Agent').item.json.error }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        352
+      ],
+      "id": "3f786d05-f072-48b1-9bb8-8ea7f21d9c8e",
+      "name": "Error Response",
+      "webhookId": "4129bcc4-aa42-4404-8cf4-9731422f7e86",
+      "credentials": {
+        "telegramApi": {
+          "id": "XNG9U5mgUP8svlLb",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ $('AI Agent').item.json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        80
+      ],
+      "id": "4e0c160d-fc11-4bb3-bc30-2ffcfd22f3f2",
+      "name": "Response",
+      "webhookId": "e71223d1-8880-4a0f-98b1-d7b002378954",
+      "credentials": {
+        "telegramApi": {
+          "id": "XNG9U5mgUP8svlLb",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Trigger",
+        "height": 240,
+        "width": 220,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -608,
+        32
+      ],
+      "id": "a47328e4-ca8c-41fc-84a9-93af5ce4b8da",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## AI Agent\n",
+        "height": 240,
+        "width": 340,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -368,
+        32
+      ],
+      "id": "34d95cf7-cfd5-470d-8ec3-6390f1acd62d",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Chat Model",
+        "height": 200,
+        "width": 200,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        288
+      ],
+      "id": "4b3b659d-8f2a-4497-8130-1af38427d50e",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Tools",
+        "height": 200,
+        "width": 320,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -336,
+        288
+      ],
+      "id": "c60ef97b-1bc5-4fa9-96c4-8f496ddc6635",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Log Actions & Cost",
+        "height": 240,
+        "width": 380,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "e7a92e73-eb32-4872-aaf1-773c87bde037",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Log Error Actions & Cost",
+        "height": 240,
+        "width": 380,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        272
+      ],
+      "id": "ae4d3f35-11f6-4200-9eec-e9824be86f4d",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Initialize the output arrays\nconst steps = [];\nconst tokens = [];\nlet totalCost = 0; // Add this to track the total cost\n\n// Process each item in the input\nfor (const item of $input.all()) {\n  let data = item.json;\n  \n  // Check if the data is an array itself (like your example JSON)\n  if (Array.isArray(data)) {\n    // Process each object in the array\n    for (const obj of data) {\n      // Extract steps information\n      if (obj.intermediateSteps && Array.isArray(obj.intermediateSteps)) {\n        for (const step of obj.intermediateSteps) {\n          if (step.action) {\n            steps.push({\n              tool: step.action.tool,\n              toolInput: step.action.toolInput,\n              observation: step.observation\n            });\n          }\n        }\n      }\n      \n      // Extract token and cost information\n      if (obj.intermediateSteps && Array.isArray(obj.intermediateSteps)) {\n        for (const step of obj.intermediateSteps) {\n          if (step.action && step.action.messageLog && Array.isArray(step.action.messageLog)) {\n            for (const message of step.action.messageLog) {\n              if (message.kwargs && message.kwargs.response_metadata && message.kwargs.response_metadata.usage) {\n                const usage = message.kwargs.response_metadata.usage;\n                tokens.push({\n                  prompt_tokens: usage.prompt_tokens,\n                  completion_tokens: usage.completion_tokens,\n                  total_tokens: usage.total_tokens,\n                  cost: usage.cost,\n                  model_name: message.kwargs.response_metadata.model_name\n                });\n                \n                // Add the cost to our running total\n                if (typeof usage.cost === 'number') {\n                  totalCost += usage.cost;\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  } else {\n    // If data is not an array, process it as a single object\n    // Extract steps information\n    if (data.intermediateSteps && Array.isArray(data.intermediateSteps)) {\n      for (const step of data.intermediateSteps) {\n        if (step.action) {\n          steps.push({\n            tool: step.action.tool,\n            toolInput: step.action.toolInput,\n            observation: step.observation\n          });\n        }\n      }\n    }\n    \n    // Extract token and cost information\n    if (data.intermediateSteps && Array.isArray(data.intermediateSteps)) {\n      for (const step of data.intermediateSteps) {\n        if (step.action && step.action.messageLog && Array.isArray(step.action.messageLog)) {\n          for (const message of step.action.messageLog) {\n            if (message.kwargs && message.kwargs.response_metadata && message.kwargs.response_metadata.usage) {\n              const usage = message.kwargs.response_metadata.usage;\n              tokens.push({\n                prompt_tokens: usage.prompt_tokens,\n                completion_tokens: usage.completion_tokens,\n                total_tokens: usage.total_tokens,\n                cost: usage.cost,\n                model_name: message.kwargs.response_metadata.model_name\n              });\n              \n              // Add the cost to our running total\n              if (typeof usage.cost === 'number') {\n                totalCost += usage.cost;\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n\n// Return the processed data with total_cost included\nreturn [{\n  json: {\n    steps: steps,\n    tokens: tokens,\n    total_cost: totalCost\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        352
+      ],
+      "id": "47b96a36-42bd-4c64-a1cf-cbffdcdc167a",
+      "name": "Clean_Up"
+    },
+    {
+      "parameters": {
+        "content": "## Reponse",
+        "height": 240,
+        "width": 200,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        400,
+        0
+      ],
+      "id": "bfc52214-3b91-4f59-a1f0-cdef5df8877d",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "## Reponse",
+        "height": 240,
+        "width": 200,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        400,
+        272
+      ],
+      "id": "cf2ca43b-44f5-4ecf-96a9-8ca502fdd3dd",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -320,
+        112
+      ],
+      "id": "5c351030-ae4e-48f2-a8b2-0ac227008626",
+      "name": "AI Agent",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "content": "# 🛠️ Setup Guide  \n**Author:** [Nate Herk](https://www.youtube.com/@nateherk)\n\nTo get this workflow up and running, follow these steps:\n\n1. **Connect your [OpenRouter API key](https://openrouter.ai/)**  \n   Make sure you’ve added it under Credentials in n8n.\n\n2. **Connect your Telegram account**  \n   Set up your Telegram Bot credentials and ensure it's authorized.\n\n3. **Connect any tool credentials**  \n   Link the tools you want this workflow to interact with — this may include CRMs, email platforms, etc.\n\n4. **Connect the Google Sheet template**  \n   Use [this template](https://docs.google.com/spreadsheets/d/1ImjPm2JF-uhxa9ZZ12yO3Pq7q9PakYobrdAk57c9z8c/edit?usp=sharing) and link it to the Google Sheets node in your workflow.\n\nOnce all connections are set up, you're good to go!\n",
+        "height": 540,
+        "width": 520
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1136,
+        32
+      ],
+      "id": "084c7587-49b9-40a9-83dd-39bafe89c27b",
+      "name": "Sticky Note8"
+    }
+  ],
+  "connections": {
+    "4.1-mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Contacts": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean Up": {
+      "main": [
+        [
+          {
+            "node": "Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Errors": {
+      "main": [
+        [
+          {
+            "node": "Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean_Up": {
+      "main": [
+        [
+          {
+            "node": "Errors",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Clean Up",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Clean_Up",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "74e8d71f-9539-43ea-b4b2-2413c76308f8",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-13T17:41:08.331Z",
+      "createdAt": "2025-12-13T17:41:08.331Z",
+      "role": "workflow:owner",
+      "workflowId": "R6cmZakp3uA95sdf",
+      "projectId": "HZqYjnNmPLW2kkrP",
+      "project": {
+        "updatedAt": "2025-12-12T12:37:29.393Z",
+        "createdAt": "2025-12-12T12:34:20.173Z",
+        "id": "HZqYjnNmPLW2kkrP",
+        "name": "Miguel Simon <miguel.simon@digitalpneuma.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-12-12T12:34:20.173Z",
+            "createdAt": "2025-12-12T12:34:20.173Z",
+            "userId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+            "projectId": "HZqYjnNmPLW2kkrP",
+            "user": {
+              "updatedAt": "2026-01-31T12:34:46.000Z",
+              "createdAt": "2025-12-12T12:34:19.617Z",
+              "id": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+              "email": "miguel.simon@digitalpneuma.com",
+              "firstName": "Miguel",
+              "lastName": "Simon",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-12-12T12:39:28.094Z",
+                "personalization_survey_n8n_version": "1.123.5",
+                "automationGoalDevops": [
+                  "other",
+                  "monitoring-alerting",
+                  "reporting"
+                ],
+                "automationGoalDevopsOther": "Build workflows to automate manual processes",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "GjxXDVv1iBEVBdE4",
+                "userActivatedAt": 1765753766341,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1767113477505
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-01-30",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}
