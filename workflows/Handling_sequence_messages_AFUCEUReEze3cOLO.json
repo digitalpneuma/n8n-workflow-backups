@@ -1,0 +1,646 @@
+{
+  "updatedAt": "2025-09-11T15:10:35.000Z",
+  "createdAt": "2025-09-11T14:30:34.743Z",
+  "id": "AFUCEUReEze3cOLO",
+  "name": "Handling sequence messages",
+  "description": null,
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 1. Receive Message\n\n",
+        "height": 280,
+        "width": 220,
+        "color": 7
+      },
+      "id": "10cc897d-a25b-42c2-844b-007783945d35",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        192,
+        560
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## 3. AI Assistant\n",
+        "height": 520,
+        "width": 600,
+        "color": 7
+      },
+      "id": "81abbffa-9576-454b-b0b9-f590f9808f7c",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2000,
+        512
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "3e349b9d-f615-4ef2-89b2-3478023bb2f1",
+      "name": "Reply",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        2752,
+        656
+      ],
+      "webhookId": "e3313c88-0d56-4d06-81cf-b48870dfe2fe",
+      "typeVersion": 1.2,
+      "credentials": {
+        "telegramApi": {
+          "id": "NlXGKP2LpJFRpbRZ",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "id": "62ff796f-5613-47f3-8962-9487c4ef4a40",
+      "name": "Wait 10 Seconds",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        832,
+        768
+      ],
+      "webhookId": "87994c9a-fd20-48b6-8dbe-9af36dc40b2f",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "content": "## 2. Buffer Incoming Messages",
+        "height": 440,
+        "width": 1400,
+        "color": 7
+      },
+      "id": "f36910d6-a10c-4378-b156-3e1583c4f4d8",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        512,
+        592
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "tableId": "={{ $json.message.message_id }}"
+      },
+      "id": "e269aecb-ee88-4f45-a6e3-8b18295d1326",
+      "name": "Add to Queued Messages",
+      "type": "n8n-nodes-base.supabase",
+      "position": [
+        592,
+        672
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "supabaseApi": {
+          "id": "INTtVabnqyflR0S8",
+          "name": "Supabase account 3"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "00e45201-10b1-4ce3-b9a1-6c43010a9459",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        1504,
+        896
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "message"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d498fa54-8082-40b5-8e2c-d4879c3c649c",
+      "name": "Aggregate",
+      "type": "n8n-nodes-base.aggregate",
+      "position": [
+        2064,
+        656
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "tableId": "message_queue",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "user_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.user_id }}"
+            }
+          ]
+        }
+      },
+      "id": "0a300b46-a54e-43d0-84e5-a95d421b7d21",
+      "name": "Delete Queued Messages",
+      "type": "n8n-nodes-base.supabase",
+      "position": [
+        1744,
+        656
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "supabaseApi": {
+          "id": "INTtVabnqyflR0S8",
+          "name": "Supabase account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## 4. Send Reply\n\n\n",
+        "height": 260,
+        "width": 280,
+        "color": 7
+      },
+      "id": "2ad2ccdf-a038-4950-bc1c-eb3298c0d7d0",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2704,
+        576
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "id": "3784d83c-2e10-4811-bc12-7f1bc0c81276",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        2224,
+        896
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "IfZ7w9jey4t4KuBS",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "message_id"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "03cb35a9-2e30-4c1e-92e4-a05ed416d507",
+      "name": "Sort by Message ID",
+      "type": "n8n-nodes-base.sort",
+      "position": [
+        1264,
+        672
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "message_queue",
+        "returnAll": true,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "user_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Telegram Trigger').item.json.message.from.id }}"
+            }
+          ]
+        }
+      },
+      "id": "cbf51094-e947-44eb-ba30-88dc3c3867f3",
+      "name": "Get Queued Messages",
+      "type": "n8n-nodes-base.supabase",
+      "position": [
+        1056,
+        672
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "supabaseApi": {
+          "id": "INTtVabnqyflR0S8",
+          "name": "Supabase account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "loose"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "8852bab7-230e-442a-a4a2-994e979c8f9f",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              },
+              "leftValue": "={{ $input.last().json.message_id }}\n",
+              "rightValue": "={{ $('Telegram Trigger').item.json.message.message_id }}"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "5dbf426d-c892-46ab-9e71-9105ee7d1722",
+      "name": "Check Most Recent Message",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        1472,
+        672
+      ],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.join(String.fromCharCode(10)) }}",
+        "options": {
+          "systemMessage": "You are a helpful assistant"
+        }
+      },
+      "id": "132382f6-9f1e-4a99-862b-70b557423906",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        2256,
+        656
+      ],
+      "typeVersion": 1.7
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+      },
+      "id": "0b289d36-82e7-4410-a550-35da385fbc06",
+      "name": "Postgres Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "position": [
+        2400,
+        896
+      ],
+      "typeVersion": 1.3,
+      "credentials": {
+        "postgres": {
+          "id": "HWChotSFJwqyVfTe",
+          "name": "Postgres Demo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Allow Users to Send a Sequence of Messages to an AI Agent in Telegram with Supabase\n### Use Case\nWhen creating chatbots that interface through applications such as **Telegram** and **WhatsApp**, users can often sends multiple shorter messages in quick succession, in place of a single, longer message. This workflow accounts for this behaviour.\n### What it Does\nThis workflow allows users to send several messages in quick succession, treating them as one coherent conversation instead of separate messages requiring individual responses. \n### How it Works\n1. When messages arrive, they are stored in a **Supabase PostgreSQL** table\n2. The system waits briefly to see if additional messages arrive\n3. If no new messages arrive within the waiting period, all queued messages are:\n   - Combined and processed as a single conversation\n   - Responded to with one unified reply\n   - Deleted from the queue",
+        "height": 420,
+        "width": 700
+      },
+      "id": "0b687398-57bc-4c3a-9756-0b4ca3b2dc4d",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -592,
+        528
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### Setup\n1. Create a table in Supabase called **message_queue**. It needs to have the following columns: **user_id** (`uint8`), **message** (`text`), and **message_id** (`uint8`)\n2. Add your **Telegram**, **Supabase**, **OpenAI**, and **PostgreSQL** credentials\n3. Activate the workflow and test by sending multiple messages the Telegram bot in one go\n4. Wait ten seconds after which you will receive a single reply to all of your messages",
+        "height": 220,
+        "width": 520
+      },
+      "id": "640fc12a-8621-40aa-ac17-19e2d98e2626",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        192,
+        288
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### Modification\nChange the value of *Wait Amount* to vary the buffering window",
+        "height": 280,
+        "width": 220,
+        "color": 5
+      },
+      "id": "479a56c4-def1-4739-b674-1c6cb5cbad85",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        784,
+        656
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### Modification\nReplace this sub-node \nto use a different language\n model",
+        "height": 140,
+        "width": 340,
+        "color": 5
+      },
+      "id": "38b112bd-522b-40f2-b905-9b0f840465f1",
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2016,
+        880
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### Modification\nAdd a **System Message** to tailor the chatbot to your use case",
+        "height": 240,
+        "width": 340,
+        "color": 5
+      },
+      "id": "f6cce617-9836-4c75-95be-cafb26b72926",
+      "name": "Sticky Note9",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2224,
+        560
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "74966919-01e1-47a9-9e30-b788737d380e",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "position": [
+        256,
+        672
+      ],
+      "webhookId": "5047a673-ca1d-4e87-b51b-893108de0a59",
+      "typeVersion": 1.1,
+      "credentials": {
+        "telegramApi": {
+          "id": "NlXGKP2LpJFRpbRZ",
+          "name": "Telegram account 2"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 10 Seconds": {
+      "main": [
+        [
+          {
+            "node": "Get Queued Messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort by Message ID": {
+      "main": [
+        [
+          {
+            "node": "Check Most Recent Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Queued Messages": {
+      "main": [
+        [
+          {
+            "node": "Sort by Message ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add to Queued Messages": {
+      "main": [
+        [
+          {
+            "node": "Wait 10 Seconds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Queued Messages": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Most Recent Message": {
+      "main": [
+        [
+          {
+            "node": "Delete Queued Messages",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Add to Queued Messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "cb2e698b-2702-4996-b39b-4c9e0a4ebc19",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-12-13T17:40:47.198Z",
+      "createdAt": "2025-12-13T17:40:47.198Z",
+      "role": "workflow:owner",
+      "workflowId": "AFUCEUReEze3cOLO",
+      "projectId": "HZqYjnNmPLW2kkrP",
+      "project": {
+        "updatedAt": "2025-12-12T12:37:29.393Z",
+        "createdAt": "2025-12-12T12:34:20.173Z",
+        "id": "HZqYjnNmPLW2kkrP",
+        "name": "Miguel Simon <miguel.simon@digitalpneuma.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-12-12T12:34:20.173Z",
+            "createdAt": "2025-12-12T12:34:20.173Z",
+            "userId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+            "projectId": "HZqYjnNmPLW2kkrP",
+            "user": {
+              "updatedAt": "2026-01-31T12:34:46.000Z",
+              "createdAt": "2025-12-12T12:34:19.617Z",
+              "id": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+              "email": "miguel.simon@digitalpneuma.com",
+              "firstName": "Miguel",
+              "lastName": "Simon",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-12-12T12:39:28.094Z",
+                "personalization_survey_n8n_version": "1.123.5",
+                "automationGoalDevops": [
+                  "other",
+                  "monitoring-alerting",
+                  "reporting"
+                ],
+                "automationGoalDevopsOther": "Build workflows to automate manual processes",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "GjxXDVv1iBEVBdE4",
+                "userActivatedAt": 1765753766341,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1767113477505
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-01-30",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}
