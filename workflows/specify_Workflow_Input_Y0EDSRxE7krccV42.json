@@ -1,0 +1,335 @@
+{
+  "updatedAt": "2025-08-24T17:10:37.000Z",
+  "createdAt": "2025-08-24T16:14:09.665Z",
+  "id": "Y0EDSRxE7krccV42",
+  "name": "specify Workflow Input",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        -16
+      ],
+      "id": "a844dbdf-0f44-4180-b13c-d0088eb56447",
+      "name": "When chat message received",
+      "webhookId": "5decf079-b815-4681-874b-e31f4107f6ad"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "4ecb30de-6d2b-4e4e-a416-0643e9b9725b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        160,
+        272
+      ],
+      "id": "19b172c1-dc14-4b9c-83e8-228b514086bb",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "IfZ7w9jey4t4KuBS",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "call this tool to add a contact to the database",
+        "workflowId": {
+          "__rl": true,
+          "value": "Y0EDSRxE7krccV42",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Name', ``, 'string') }}",
+            "Email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Email', ``, 'string') }}",
+            "Phone Number": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Phone_Number', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        368,
+        240
+      ],
+      "id": "e709fda7-bd45-4769-8867-6be2a55ffa28",
+      "name": "addContact"
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        800,
+        240
+      ],
+      "id": "643338ea-6cff-414b-9f5e-c6a87687f78b",
+      "name": "Get a record",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "n97nuRFVyl6Ii18g",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "Y0EDSRxE7krccV42",
+          "mode": "id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $fromAI(\"name\") }}",
+            "Email": "={{ $fromAI(\"email\") }}",
+            "Phone Number": "={{ $fromAI(\"Phone_Number\") }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        608,
+        240
+      ],
+      "id": "2d3284b8-0924-4080-aa52-1e794950fe88",
+      "name": "Execute Workflow"
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "addContact": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow": {
+      "main": [
+        [
+          {
+            "node": "Get a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "ef328eb0-6734-4142-b6a1-1f1ea8992db2",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-13T17:43:33.967Z",
+      "createdAt": "2025-12-13T17:43:33.967Z",
+      "role": "workflow:owner",
+      "workflowId": "Y0EDSRxE7krccV42",
+      "projectId": "HZqYjnNmPLW2kkrP",
+      "project": {
+        "updatedAt": "2025-12-12T12:37:29.393Z",
+        "createdAt": "2025-12-12T12:34:20.173Z",
+        "id": "HZqYjnNmPLW2kkrP",
+        "name": "Miguel Simon <miguel.simon@digitalpneuma.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-12-12T12:34:20.173Z",
+            "createdAt": "2025-12-12T12:34:20.173Z",
+            "userId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+            "projectId": "HZqYjnNmPLW2kkrP",
+            "user": {
+              "updatedAt": "2026-01-31T12:34:46.000Z",
+              "createdAt": "2025-12-12T12:34:19.617Z",
+              "id": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+              "email": "miguel.simon@digitalpneuma.com",
+              "firstName": "Miguel",
+              "lastName": "Simon",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-12-12T12:39:28.094Z",
+                "personalization_survey_n8n_version": "1.123.5",
+                "automationGoalDevops": [
+                  "other",
+                  "monitoring-alerting",
+                  "reporting"
+                ],
+                "automationGoalDevopsOther": "Build workflows to automate manual processes",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "GjxXDVv1iBEVBdE4",
+                "userActivatedAt": 1765753766341,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1767113477505
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-01-30",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}
