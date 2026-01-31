@@ -1,0 +1,465 @@
+{
+  "updatedAt": "2026-01-11T12:49:29.161Z",
+  "createdAt": "2026-01-10T23:10:25.346Z",
+  "id": "0qgO70-ImbxTjVlVllUdV",
+  "name": "Septic System Calculator with E-Signature",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "septic-calculator-esignature",
+        "formTitle": "Septic System Sizing Calculator - Silver Bullet Septic Services",
+        "formDescription": "Complete this form to calculate the required septic system size and receive a contract for signature",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Date",
+              "fieldType": "date",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Customer Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email Address",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Phone Number",
+              "fieldType": "number",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Property Address",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Number of Bedrooms (including basement)",
+              "fieldType": "number",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Total Living Area (square feet)",
+              "fieldType": "number",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "3 or 4 pc Bathrooms",
+              "fieldType": "number"
+            },
+            {
+              "fieldLabel": "Toilets (not included in bathroom groups)",
+              "fieldType": "number"
+            },
+            {
+              "fieldLabel": "Extra Sinks",
+              "fieldType": "number"
+            },
+            {
+              "fieldLabel": "Extra Shower/bathtub (1 head)",
+              "fieldType": "number"
+            },
+            {
+              "fieldLabel": "Domestic Dishwasher",
+              "fieldType": "number"
+            },
+            {
+              "fieldLabel": "Clothes Washing Machine",
+              "fieldType": "number"
+            },
+            {
+              "fieldLabel": "Laundry Tub/Tray",
+              "fieldType": "number"
+            },
+            {
+              "fieldLabel": "Bidet",
+              "fieldType": "number"
+            },
+            {
+              "fieldLabel": "Floor Drains",
+              "fieldType": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.1,
+      "position": [
+        -768,
+        32
+      ],
+      "id": "28604682-5a73-4a83-903e-d3b40f587954",
+      "name": "Form Trigger",
+      "webhookId": "septic-calculator-esignature"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get input data from form\nconst formData = $input.item.json;\n\n// Extract form fields\nconst date = formData['Date'];\nconst customerName = formData['Customer Name'];\nconst email = formData['Email Address'];\nconst phone = formData['Phone Number'];\nconst address = formData['Property Address'];\nconst bedrooms = parseInt(formData['Number of Bedrooms (including basement)']) || 0;\nconst sqFeet = parseFloat(formData['Total Living Area (square feet)']) || 0;\n\n// Fixture counts (default to 0 if not provided)\nconst bathrooms = parseInt(formData['3 or 4 pc Bathrooms']) || 0;\nconst toilets = parseInt(formData['Toilets (not included in bathroom groups)']) || 0;\nconst sinks = parseInt(formData['Extra Sinks']) || 0;\nconst showers = parseInt(formData['Extra Shower/bathtub (1 head)']) || 0;\nconst dishwasher = parseInt(formData['Domestic Dishwasher']) || 0;\nconst washingMachine = parseInt(formData['Clothes Washing Machine']) || 0;\nconst laundryTub = parseInt(formData['Laundry Tub/Tray']) || 0;\nconst bidet = parseInt(formData['Bidet']) || 0;\nconst floorDrains = parseInt(formData['Floor Drains']) || 0;\n\n// ========================================\n// 1. CONVERT SQUARE FEET TO SQUARE METERS\n// ========================================\nconst sqMeters = sqFeet * 0.09294;\n\n// ========================================\n// 2. CALCULATE BEDROOM FLOW RATE\n// ========================================\nlet bedroomBaseFlow = 0;\nif (bedrooms === 1) bedroomBaseFlow = 750;\nelse if (bedrooms === 2) bedroomBaseFlow = 1100;\nelse if (bedrooms === 3) bedroomBaseFlow = 1600;\nelse if (bedrooms === 4) bedroomBaseFlow = 2000;\nelse if (bedrooms >= 5) bedroomBaseFlow = 2500;\n\n// Additional bedroom flow for bedrooms over 5\nconst additionalBedroomFlow = bedrooms > 5 ? (bedrooms - 5) * 500 : 0;\nconst totalBedroomFlow = bedroomBaseFlow + additionalBedroomFlow;\n\n// ========================================\n// 3. CALCULATE LIVING AREA FLOW\n// ========================================\nlet livingAreaFlow = 0;\n\n// Calculate area in each bracket\nlet area_0_200 = 0;\nlet area_200_400 = 0;\nlet area_400_600 = 0;\nlet area_600_plus = 0;\n\nif (sqMeters > 200) {\n  area_0_200 = 200;\n  \n  if (sqMeters > 400) {\n    area_200_400 = 200;\n    \n    if (sqMeters > 600) {\n      area_400_600 = 200;\n      area_600_plus = sqMeters - 600;\n    } else {\n      area_400_600 = sqMeters - 400;\n    }\n  } else {\n    area_200_400 = sqMeters - 200;\n  }\n} else {\n  area_0_200 = sqMeters;\n}\n\n// Apply flow rates per bracket\nconst flow_0_200 = area_0_200 * 0; // 0 liters per sq m\nconst flow_200_400 = (area_200_400 * 100) / 10; // 100 liters per 10 sq m\nconst flow_400_600 = (area_400_600 * 75) / 10; // 75 liters per 10 sq m\nconst flow_600_plus = (area_600_plus * 50) / 10; // 50 liters per 10 sq m\n\nlivingAreaFlow = flow_0_200 + flow_200_400 + flow_400_600 + flow_600_plus;\n\n// ========================================\n// 4. CALCULATE FIXTURE FLOW\n// ========================================\nconst fixtureUnits = {\n  bathrooms: bathrooms * 6,\n  showers: showers * 4,\n  sinks: sinks * 1.5,\n  bidet: bidet * 1.5,\n  dishwasher: dishwasher * 0, // Not counted separately per Excel\n  washingMachine: washingMachine * 1.5,\n  laundryTub: laundryTub * 1.5,\n  toilets: toilets * 1,\n  floorDrains: floorDrains * 2\n};\n\nconst totalFixtureUnits = \n  fixtureUnits.bathrooms + \n  fixtureUnits.showers + \n  fixtureUnits.sinks + \n  fixtureUnits.bidet + \n  fixtureUnits.dishwasher + \n  fixtureUnits.washingMachine + \n  fixtureUnits.laundryTub + \n  fixtureUnits.toilets + \n  fixtureUnits.floorDrains;\n\n// Additional flow for fixtures over 20 units\nconst fixturesOver20Flow = totalFixtureUnits > 20 ? (totalFixtureUnits - 20) * 50 : 0;\n\n// ========================================\n// 5. CALCULATE DESIGN DAILY SEWAGE FLOW\n// ========================================\n// Per Excel logic: Take the maximum of:\n// - Additional bedroom flow (for bedrooms over 5)\n// - Fixtures over 20 flow\n// - Living area flow\nconst maxAdditionalFlow = Math.max(additionalBedroomFlow, fixturesOver20Flow, livingAreaFlow);\n\n// Total design daily sewage flow = base bedroom flow + max additional flow\nconst designDailySewageFlow = bedroomBaseFlow + maxAdditionalFlow;\n\n// ========================================\n// 6. CALCULATE SEPTIC TANK SIZE\n// ========================================\nconst septicTankSize = designDailySewageFlow * 2;\n\n// Calculate T time (16 min per cm)\nconst tTime = 16; // minutes per cm\n\n// Calculate infiltrator chambers (QT/300 = Metres)\nconst infiltratorChambers = (designDailySewageFlow * tTime) / 300;\n\n// ========================================\n// 7. PREPARE OUTPUT DATA\n// ========================================\nreturn {\n  customerInfo: {\n    date: date,\n    name: customerName,\n    email: email,\n    phone: phone,\n    address: address\n  },\n  inputs: {\n    bedrooms: bedrooms,\n    sqFeet: sqFeet,\n    sqMeters: Math.round(sqMeters * 100) / 100,\n    fixtures: {\n      bathrooms: bathrooms,\n      toilets: toilets,\n      sinks: sinks,\n      showers: showers,\n      dishwasher: dishwasher,\n      washingMachine: washingMachine,\n      laundryTub: laundryTub,\n      bidet: bidet,\n      floorDrains: floorDrains\n    }\n  },\n  calculations: {\n    bedroomFlow: {\n      baseFlow: bedroomBaseFlow,\n      additionalFlow: additionalBedroomFlow,\n      totalFlow: totalBedroomFlow\n    },\n    livingAreaFlow: {\n      area_0_200_sqm: Math.round(area_0_200 * 100) / 100,\n      area_200_400_sqm: Math.round(area_200_400 * 100) / 100,\n      area_400_600_sqm: Math.round(area_400_600 * 100) / 100,\n      area_600_plus_sqm: Math.round(area_600_plus * 100) / 100,\n      flow_0_200: Math.round(flow_0_200 * 100) / 100,\n      flow_200_400: Math.round(flow_200_400 * 100) / 100,\n      flow_400_600: Math.round(flow_400_600 * 100) / 100,\n      flow_600_plus: Math.round(flow_600_plus * 100) / 100,\n      totalLivingAreaFlow: Math.round(livingAreaFlow * 100) / 100\n    },\n    fixtureFlow: {\n      totalUnits: Math.round(totalFixtureUnits * 100) / 100,\n      fixturesOver20Flow: fixturesOver20Flow,\n      breakdown: fixtureUnits\n    },\n    designDailySewageFlow: Math.round(designDailySewageFlow * 100) / 100,\n    septicTankSize: Math.round(septicTankSize * 100) / 100,\n    infiltratorChambers: Math.round(infiltratorChambers * 100) / 100\n  },\n  summary: {\n    designDailySewageFlowLiters: Math.round(designDailySewageFlow * 100) / 100,\n    septicTankSizeLiters: Math.round(septicTankSize * 100) / 100,\n    infiltratorChambersMeters: Math.round(infiltratorChambers * 100) / 100\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -544,
+        32
+      ],
+      "id": "05349848-9946-48ba-9cfe-bff88d658bf4",
+      "name": "Calculate Septic System Size"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "=## Septic System Calculation Complete!\n\n**Customer:** {{ $json.customerInfo.name }}\n**Email:** {{ $json.customerInfo.email }}\n**Phone:** {{ $json.customerInfo.phone }}\n\n---\n\n### Results:\n✅ **Design Daily Sewage Flow (Q):** {{ $json.summary.designDailySewageFlowLiters }} liters\n✅ **Recommended Septic Tank Size:** {{ $json.summary.septicTankSizeLiters }} liters\n✅ **Infiltrator Chambers Required:** {{ $json.summary.infiltratorChambersMeters }} meters\n\n---\n\n### Next Steps:\nYou will receive an email shortly with:\n1. A detailed contract for review\n2. A link to sign the contract electronically via DocuSeal\n3. Your signed contract will be automatically delivered to your email\n\nThank you for choosing Silver Bullet Septic Services Inc.!",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -320,
+        -80
+      ],
+      "id": "e73ed35b-bd85-4ea7-8677-7a37ab8a504d",
+      "name": "Respond to Webhook",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prepare contract data for PDF generation\nconst data = $input.item.json;\n\n// Format date\nconst contractDate = new Date(data.customerInfo.date).toLocaleDateString('en-US', {\n  year: 'numeric',\n  month: 'long',\n  day: 'numeric'\n});\n\n// Generate contract number\nconst contractNumber = 'SBS-' + Date.now().toString().slice(-8);\n\nreturn {\n  // Contract Header\n  contractNumber: contractNumber,\n  contractDate: contractDate,\n  companyName: 'Silver Bullet Septic Services Inc.',\n  companyAddress: '1263 Highway 5W Dundas ON L8H 5E1',\n  companyBCIN: 'Rodney Slagter BCIN 34588',\n  \n  // Customer Info\n  customerName: data.customerInfo.name,\n  customerEmail: data.customerInfo.email,\n  customerPhone: data.customerInfo.phone,\n  propertyAddress: data.customerInfo.address,\n  \n  // Property Details\n  bedrooms: data.inputs.bedrooms,\n  sqFeet: data.inputs.sqFeet,\n  sqMeters: data.inputs.sqMeters,\n  \n  // Fixtures Summary\n  bathrooms: data.inputs.fixtures.bathrooms,\n  toilets: data.inputs.fixtures.toilets,\n  sinks: data.inputs.fixtures.sinks,\n  showers: data.inputs.fixtures.showers,\n  dishwashers: data.inputs.fixtures.dishwasher,\n  washingMachines: data.inputs.fixtures.washingMachine,\n  laundryTubs: data.inputs.fixtures.laundryTub,\n  bidets: data.inputs.fixtures.bidet,\n  floorDrains: data.inputs.fixtures.floorDrains,\n  totalFixtureUnits: data.calculations.fixtureFlow.totalUnits,\n  \n  // Calculations\n  bedroomBaseFlow: data.calculations.bedroomFlow.baseFlow,\n  bedroomAdditionalFlow: data.calculations.bedroomFlow.additionalFlow,\n  livingAreaFlow: data.calculations.livingAreaFlow.totalLivingAreaFlow,\n  fixtureOverflow: data.calculations.fixtureFlow.fixturesOver20Flow,\n  \n  // Final Results\n  designDailySewageFlow: data.summary.designDailySewageFlowLiters,\n  septicTankSize: data.summary.septicTankSizeLiters,\n  infiltratorChambers: data.summary.infiltratorChambersMeters,\n  \n  // Full data for reference\n  fullData: data\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        128
+      ],
+      "id": "fd7e15ad-9c3c-47f8-9db2-616cb4e12624",
+      "name": "Prepare Contract Data"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.docuseal.co/submissions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"template_id\": 2527676,\n  \"send_email\": true,\n  \"submitters\": [\n    {\n      \"role\": \"Customer\",\n      \"email\": \"{{ $('Prepare Contract Data').item.json.customerEmail }}\",\n      \"name\": \"{{ $('Prepare Contract Data').item.json.customerName }}\"\n    }\n  ],\n  \"fields\": [\n    {\n      \"name\": \"date\",\n      \"default_value\": \"{{ $('Prepare Contract Data').item.json.contractDate }}\"\n    },\n    {\n      \"name\": \"ownerName\",\n      \"default_value\": \"{{ $('Prepare Contract Data').item.json.customerName }}\"\n    },\n    {\n      \"name\": \"propertyAddress\",\n      \"default_value\": \"{{ $('Prepare Contract Data').item.json.propertyAddress }}\"\n    },\n    {\n      \"name\": \"emailAddress\",\n      \"default_value\": \"{{ $('Prepare Contract Data').item.json.customerEmail }}\"\n    },\n    {\n      \"name\": \"telephoneNumber\",\n      \"default_value\": \"{{ $('Prepare Contract Data').item.json.customerPhone }}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -96,
+        128
+      ],
+      "id": "15767b74-b5d6-4d8d-84b1-7195d7ddb57c",
+      "name": "Send to DocuSeal for Signature",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "31b55er5F9dPUnWD",
+          "name": "Header Auth account"
+        }
+      },
+      "notes": "Sends contract to DocuSeal for customer e-signature. Configure your template ID in environment variables."
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.documents[0].url }}"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        128,
+        128
+      ],
+      "id": "1eeba66c-9157-4fb1-a895-5e7fc6f5801f",
+      "name": "Save Signed PDF to Google Drive",
+      "disabled": true,
+      "notes": "Triggered by DocuSeal webhook when contract is signed. Saves PDF to Google Drive."
+    },
+    {
+      "parameters": {
+        "fromEmail": "noreply@silverbulletseptic.com",
+        "toEmail": "={{ $json.customerEmail }}",
+        "subject": "=Your Septic System Contract - {{ $json.customerName }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -96,
+        -80
+      ],
+      "id": "afb21d3e-8bd1-4343-b3ff-b6aa2c7e75f1",
+      "name": "Email Customer Confirmation",
+      "webhookId": "d7a8ac83-264d-41cd-9ba9-3b8088439494",
+      "notes": "Sends confirmation email to customer with calculation results"
+    },
+    {
+      "parameters": {
+        "fromEmail": "noreply@silverbulletseptic.com",
+        "toEmail": "admin@silverbulletseptic.com",
+        "subject": "=New Septic Quote - {{ $json.customerName }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -96,
+        320
+      ],
+      "id": "df958b74-abdd-41e4-88df-a4dd40636d37",
+      "name": "Email Admin Notification",
+      "webhookId": "dbf3f8df-b5f2-4a27-b7be-e38876eede16",
+      "notes": "Notifies company admin of new quote submission"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Contract Number": "={{ $json.contractNumber }}",
+            "Date": "={{ $json.contractDate }}",
+            "Customer Name": "={{ $json.customerName }}",
+            "Email": "={{ $json.customerEmail }}",
+            "Phone": "={{ $json.customerPhone }}",
+            "Address": "={{ $json.propertyAddress }}",
+            "Bedrooms": "={{ $json.bedrooms }}",
+            "Square Feet": "={{ $json.sqFeet }}",
+            "Square Meters": "={{ $json.sqMeters }}",
+            "Design Daily Sewage Flow (L)": "={{ $json.designDailySewageFlow }}",
+            "Septic Tank Size (L)": "={{ $json.septicTankSize }}",
+            "Infiltrator Chambers (m)": "={{ $json.infiltratorChambers }}",
+            "Total Fixture Units": "={{ $json.totalFixtureUnits }}",
+            "Status": "Contract Sent",
+            "Full Calculation Data": "={{ JSON.stringify($json.fullData) }}"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        128,
+        320
+      ],
+      "id": "7a93ddb9-ed6a-4051-80e7-de0e8fc59556",
+      "name": "Save to Airtable CRM",
+      "disabled": true,
+      "notes": "Stores all contract data in Airtable for CRM tracking"
+    },
+    {
+      "parameters": {
+        "path": "docuseal-contract-signed",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -768,
+        320
+      ],
+      "id": "617ce352-3fc2-4ab7-811e-14e4a5f059fb",
+      "name": "DocuSeal Webhook - Contract Signed",
+      "webhookId": "docuseal-contract-signed",
+      "notes": "Configure this webhook URL in DocuSeal to receive notifications when contracts are signed"
+    },
+    {
+      "parameters": {
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -544,
+        320
+      ],
+      "id": "ed813543-f95f-4e29-b32d-2df7e499608d",
+      "name": "Upload Signed Contract to Drive",
+      "disabled": true,
+      "notes": "Uploads the signed PDF to Google Drive when webhook is triggered"
+    }
+  ],
+  "connections": {
+    "Form Trigger": {
+      "main": [
+        [
+          {
+            "node": "Calculate Septic System Size",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Septic System Size": {
+      "main": [
+        [
+          {
+            "node": "Prepare Contract Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Contract Data": {
+      "main": [
+        [
+          {
+            "node": "Send to DocuSeal for Signature",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Email Customer Confirmation",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Email Admin Notification",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Save to Airtable CRM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send to DocuSeal for Signature": {
+      "main": [
+        [
+          {
+            "node": "Save Signed PDF to Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DocuSeal Webhook - Contract Signed": {
+      "main": [
+        [
+          {
+            "node": "Upload Signed Contract to Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "b55fb3eb-771e-49b5-bb7a-95c461c688eb",
+  "activeVersionId": null,
+  "versionCounter": 9,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-10T23:10:25.347Z",
+      "createdAt": "2026-01-10T23:10:25.347Z",
+      "role": "workflow:owner",
+      "workflowId": "0qgO70-ImbxTjVlVllUdV",
+      "projectId": "HZqYjnNmPLW2kkrP",
+      "project": {
+        "updatedAt": "2025-12-12T12:37:29.393Z",
+        "createdAt": "2025-12-12T12:34:20.173Z",
+        "id": "HZqYjnNmPLW2kkrP",
+        "name": "Miguel Simon <miguel.simon@digitalpneuma.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-12-12T12:34:20.173Z",
+            "createdAt": "2025-12-12T12:34:20.173Z",
+            "userId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+            "projectId": "HZqYjnNmPLW2kkrP",
+            "user": {
+              "updatedAt": "2026-01-31T12:34:46.000Z",
+              "createdAt": "2025-12-12T12:34:19.617Z",
+              "id": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+              "email": "miguel.simon@digitalpneuma.com",
+              "firstName": "Miguel",
+              "lastName": "Simon",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-12-12T12:39:28.094Z",
+                "personalization_survey_n8n_version": "1.123.5",
+                "automationGoalDevops": [
+                  "other",
+                  "monitoring-alerting",
+                  "reporting"
+                ],
+                "automationGoalDevopsOther": "Build workflows to automate manual processes",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "GjxXDVv1iBEVBdE4",
+                "userActivatedAt": 1765753766341,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1767113477505
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-01-30",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}
