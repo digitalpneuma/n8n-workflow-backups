@@ -1,0 +1,153 @@
+{
+  "updatedAt": "2026-01-07T13:19:29.136Z",
+  "createdAt": "2026-01-07T00:21:29.038Z",
+  "id": "Ld5u7zdYJ32MbhED",
+  "name": "Scripture Storage - FIXED UUID",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        496,
+        -208
+      ],
+      "id": "2f1bae98-8d55-4b4d-b5fe-9eb5a6a6315f",
+      "name": "When clicking 'Execute workflow'"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Simple hash-based embedding function for testing\n// This creates a 384-dimensional vector based on the text\nfunction simpleEmbedding(text) {\n  const dimensions = 384; // Standard embedding size\n  const embedding = new Array(dimensions).fill(0);\n  \n  // Create a simple hash-based embedding\n  for (let i = 0; i < text.length; i++) {\n    const charCode = text.charCodeAt(i);\n    const index = (charCode * i) % dimensions;\n    embedding[index] += charCode / 1000;\n  }\n  \n  // Normalize the vector\n  const magnitude = Math.sqrt(embedding.reduce((sum, val) => sum + val * val, 0));\n  return embedding.map(val => val / magnitude);\n}\n\nconst scriptures = [\n  {\n    id: \"john_3_16\",\n    document: \"John 3:16: For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life.\",\n    metadata: {\n      reference: \"John 3:16\",\n      topic: \"salvation, love, eternal life\"\n    }\n  },\n  {\n    id: \"phil_4_13\",\n    document: \"Philippians 4:13: I can do all things through Christ who strengthens me.\",\n    metadata: {\n      reference: \"Philippians 4:13\",\n      topic: \"strength, perseverance, faith\"\n    }\n  },\n  {\n    id: \"psalm_23_1\",\n    document: \"Psalm 23:1: The LORD is my shepherd, I shall not be in want.\",\n    metadata: {\n      reference: \"Psalm 23:1\",\n      topic: \"provision, comfort, guidance\"\n    }\n  },\n  {\n    id: \"romans_8_28\",\n    document: \"Romans 8:28: And we know that in all things God works for the good of those who love him, who have been called according to his purpose.\",\n    metadata: {\n      reference: \"Romans 8:28\",\n      topic: \"faith, purpose, trust\"\n    }\n  },\n  {\n    id: \"isaiah_41_10\",\n    document: \"Isaiah 41:10: So do not fear, for I am with you; do not be dismayed, for I am your God. I will strengthen you and help you; I will uphold you with my righteous right hand.\",\n    metadata: {\n      reference: \"Isaiah 41:10\",\n      topic: \"fear, courage, strength, comfort\"\n    }\n  }\n];\n\n// Generate embeddings for each scripture\nconst requestBody = {\n  ids: scriptures.map(s => s.id),\n  documents: scriptures.map(s => s.document),\n  metadatas: scriptures.map(s => s.metadata),\n  embeddings: scriptures.map(s => simpleEmbedding(s.document))\n};\n\nreturn [{\n  json: requestBody\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        -208
+      ],
+      "id": "ae0edb5e-0a6c-45c4-a956-4edc57f61ed0",
+      "name": "Prepare Scripture Data with Embeddings"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://chromadb:8000/api/v2/tenants/default_tenant/databases/default_database/collections/b727b1d0-27d2-4bd9-aa40-e1fcb1089b5e/add",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        -208
+      ],
+      "id": "75bfa710-4cad-4eb4-9d1d-b8e9a83bc3d9",
+      "name": "Add to ChromaDB"
+    }
+  ],
+  "connections": {
+    "When clicking 'Execute workflow'": {
+      "main": [
+        [
+          {
+            "node": "Prepare Scripture Data with Embeddings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Scripture Data with Embeddings": {
+      "main": [
+        [
+          {
+            "node": "Add to ChromaDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "ff8ac4b9-91e6-41aa-befb-19b80a8858e1",
+  "activeVersionId": null,
+  "versionCounter": 11,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-07T00:21:29.042Z",
+      "createdAt": "2026-01-07T00:21:29.042Z",
+      "role": "workflow:owner",
+      "workflowId": "Ld5u7zdYJ32MbhED",
+      "projectId": "HZqYjnNmPLW2kkrP",
+      "project": {
+        "updatedAt": "2025-12-12T12:37:29.393Z",
+        "createdAt": "2025-12-12T12:34:20.173Z",
+        "id": "HZqYjnNmPLW2kkrP",
+        "name": "Miguel Simon <miguel.simon@digitalpneuma.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-12-12T12:34:20.173Z",
+            "createdAt": "2025-12-12T12:34:20.173Z",
+            "userId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+            "projectId": "HZqYjnNmPLW2kkrP",
+            "user": {
+              "updatedAt": "2026-01-31T12:34:46.000Z",
+              "createdAt": "2025-12-12T12:34:19.617Z",
+              "id": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+              "email": "miguel.simon@digitalpneuma.com",
+              "firstName": "Miguel",
+              "lastName": "Simon",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-12-12T12:39:28.094Z",
+                "personalization_survey_n8n_version": "1.123.5",
+                "automationGoalDevops": [
+                  "other",
+                  "monitoring-alerting",
+                  "reporting"
+                ],
+                "automationGoalDevopsOther": "Build workflows to automate manual processes",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "GjxXDVv1iBEVBdE4",
+                "userActivatedAt": 1765753766341,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1767113477505
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-01-30",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}
