@@ -1,0 +1,283 @@
+{
+  "updatedAt": "2025-08-10T20:02:10.000Z",
+  "createdAt": "2025-07-22T02:01:09.589Z",
+  "id": "93F2BMIM28fM9BYi",
+  "name": "Information Extractor",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        -32
+      ],
+      "id": "e8d62315-cf60-4c23-8c03-7efa9ef4d6ef",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.query }}",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "Full Name",
+              "description": "Extracts the sender's full name.",
+              "required": true
+            },
+            {
+              "name": "Company Name",
+              "description": "The name of the company. This should be a business name, not a type of company or business model.\nThis field is not required, if you can't find a business name, output \"Not Provided\nA company name may look like this:\nTrueHorizon AI\nABC Corp\nMcDonalds\nSalesforce",
+              "required": true
+            },
+            {
+              "name": "Project Type",
+              "description": "The type of project client is requesting.",
+              "required": true
+            },
+            {
+              "name": "Employee Count",
+              "description": "Extracts the approximate company siize."
+            },
+            {
+              "name": "Budget",
+              "description": "The budget range of the project",
+              "required": true
+            },
+            {
+              "name": "Project time line",
+              "description": "Extracts the expected completion timeline."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        -352,
+        -32
+      ],
+      "id": "bc57c073-3aa6-418d-861c-bb02b30f9c0e",
+      "name": "Information Extractor"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -352,
+        128
+      ],
+      "id": "ef0aebde-1650-42f7-afa3-f10c3fb01395",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "l1L18JG0n3GhTJuh",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "65d76817-8088-4009-88a1-5db3927034ac",
+              "name": "",
+              "value": "={{ $json.output['Full Name'] }}",
+              "type": "string"
+            },
+            {
+              "id": "bac0534b-481e-471e-bb65-7c670f7bde36",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        -32
+      ],
+      "id": "5c204ced-9cf7-4bf6-bdbe-6dd4a6eb0fed",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.query }}",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "Full Name",
+              "description": "Extracts the sender's full name.",
+              "required": true
+            },
+            {
+              "name": "Company Name",
+              "description": "The company name",
+              "required": true
+            },
+            {
+              "name": "Project Type",
+              "description": "The type of project client is requesting.",
+              "required": true
+            },
+            {
+              "name": "Employee Count",
+              "description": "Extracts the approximate company siize."
+            },
+            {
+              "name": "Budget",
+              "description": "The budget range of the project",
+              "required": true
+            },
+            {
+              "name": "Project time line",
+              "description": "Extracts the expected completion timeline."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        -352,
+        -224
+      ],
+      "id": "d8de9053-3074-4164-bdb9-7f8ffb88fd31",
+      "name": "Information Extractor1"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "When clicking ‘Execute workflow’": [
+      {
+        "json": {
+          "query": "Hey there, my name is Sarah Johnson. We're a fast-growing SaaS company with about 120 employees, and we're looking for help with building a custom Al-powered chatbot to handle customer support inquiries. Our budget for this project is around $25,000 to $30,000, and we'd like to have it up and running within 4 months. Can you let me know how your team can assist us?"
+        }
+      }
+    ]
+  },
+  "versionId": "39a6687c-5203-47a9-8eae-b39b019b7847",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-13T17:40:49.542Z",
+      "createdAt": "2025-12-13T17:40:49.542Z",
+      "role": "workflow:owner",
+      "workflowId": "93F2BMIM28fM9BYi",
+      "projectId": "HZqYjnNmPLW2kkrP",
+      "project": {
+        "updatedAt": "2025-12-12T12:37:29.393Z",
+        "createdAt": "2025-12-12T12:34:20.173Z",
+        "id": "HZqYjnNmPLW2kkrP",
+        "name": "Miguel Simon <miguel.simon@digitalpneuma.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-12-12T12:34:20.173Z",
+            "createdAt": "2025-12-12T12:34:20.173Z",
+            "userId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+            "projectId": "HZqYjnNmPLW2kkrP",
+            "user": {
+              "updatedAt": "2026-01-31T12:34:46.000Z",
+              "createdAt": "2025-12-12T12:34:19.617Z",
+              "id": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+              "email": "miguel.simon@digitalpneuma.com",
+              "firstName": "Miguel",
+              "lastName": "Simon",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-12-12T12:39:28.094Z",
+                "personalization_survey_n8n_version": "1.123.5",
+                "automationGoalDevops": [
+                  "other",
+                  "monitoring-alerting",
+                  "reporting"
+                ],
+                "automationGoalDevopsOther": "Build workflows to automate manual processes",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "GjxXDVv1iBEVBdE4",
+                "userActivatedAt": 1765753766341,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1767113477505
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-01-30",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}
