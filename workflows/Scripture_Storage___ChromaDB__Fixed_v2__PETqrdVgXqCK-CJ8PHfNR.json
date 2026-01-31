@@ -1,0 +1,193 @@
+{
+  "updatedAt": "2026-01-07T13:11:31.000Z",
+  "createdAt": "2026-01-07T12:35:04.124Z",
+  "id": "PETqrdVgXqCK-CJ8PHfNR",
+  "name": "Scripture Storage - ChromaDB (Fixed v2)",
+  "description": null,
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "0803c784-4427-4526-b127-5430602c9f9e",
+      "name": "When clicking ‘Execute workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        496,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const scriptures = [\n  {\n    id: \"john_3_16\",\n    document: \"John 3:16: For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life.\",\n    metadata: { reference: \"John 3:16\", topic: \"salvation, love, eternal life\" }\n  },\n  {\n    id: \"phil_4_13\",\n    document: \"Philippians 4:13: I can do all things through Christ who strengthens me.\",\n    metadata: { reference: \"Philippians 4:13\", topic: \"strength, perseverance, faith\" }\n  },\n  {\n    id: \"psalm_23_1\",\n    document: \"Psalm 23:1: The LORD is my shepherd, I shall not be in want.\",\n    metadata: { reference: \"Psalm 23:1\", topic: \"provision, comfort, guidance\" }\n  },\n  {\n    id: \"romans_8_28\",\n    document: \"Romans 8:28: And we know that in all things God works for the good of those who love him, who have been called according to his purpose.\",\n    metadata: { reference: \"Romans 8:28\", topic: \"faith, purpose, trust\" }\n  },\n  {\n    id: \"isaiah_41_10\",\n    document: \"Isaiah 41:10: So do not fear, for I am with you; do not be dismayed, for I am your God. I will strengthen you and help you; I will uphold you with my righteous right hand.\",\n    metadata: { reference: \"Isaiah 41:10\", topic: \"fear, courage, strength, comfort\" }\n  }\n];\n\nreturn [{\n  json: {\n    ids: scriptures.map(s => s.id),\n    documents: scriptures.map(s => s.document),\n    metadatas: scriptures.map(s => s.metadata)\n  }\n}];"
+      },
+      "id": "c2132e10-0047-4c47-bc28-40f881e6cd31",
+      "name": "Prepare Scripture Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "url": "http://chromadb:8000/api/v2/tenants/default_tenant/databases/default_database/collections/scripture_passages",
+        "options": {}
+      },
+      "id": "0b9136ef-9643-427f-aba9-9726846c0ac2",
+      "name": "Get Collection ID",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        944,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'http://chromadb:8000/api/v2/tenants/default_tenant/databases/default_database/collections/' + $json.id + '/add' }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "ids",
+              "value": "={{ $node[\"Prepare Scripture Data\"].json.ids }}"
+            },
+            {
+              "name": "documents",
+              "value": "={{ $node[\"Prepare Scripture Data\"].json.documents }}"
+            },
+            {
+              "name": "metadatas",
+              "value": "={{ $node[\"Prepare Scripture Data\"].json.metadatas }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7f645ac6-dca9-4ad2-bd7b-970599111d53",
+      "name": "Add to ChromaDB",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1168,
+        128
+      ]
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Prepare Scripture Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Scripture Data": {
+      "main": [
+        [
+          {
+            "node": "Get Collection ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Collection ID": {
+      "main": [
+        [
+          {
+            "node": "Add to ChromaDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "aa83dbaf-9010-4961-92ab-b6ff8d9ad66e",
+  "activeVersionId": null,
+  "versionCounter": 4,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-07T12:35:04.127Z",
+      "createdAt": "2026-01-07T12:35:04.127Z",
+      "role": "workflow:owner",
+      "workflowId": "PETqrdVgXqCK-CJ8PHfNR",
+      "projectId": "HZqYjnNmPLW2kkrP",
+      "project": {
+        "updatedAt": "2025-12-12T12:37:29.393Z",
+        "createdAt": "2025-12-12T12:34:20.173Z",
+        "id": "HZqYjnNmPLW2kkrP",
+        "name": "Miguel Simon <miguel.simon@digitalpneuma.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-12-12T12:34:20.173Z",
+            "createdAt": "2025-12-12T12:34:20.173Z",
+            "userId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+            "projectId": "HZqYjnNmPLW2kkrP",
+            "user": {
+              "updatedAt": "2026-01-31T12:34:46.000Z",
+              "createdAt": "2025-12-12T12:34:19.617Z",
+              "id": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+              "email": "miguel.simon@digitalpneuma.com",
+              "firstName": "Miguel",
+              "lastName": "Simon",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-12-12T12:39:28.094Z",
+                "personalization_survey_n8n_version": "1.123.5",
+                "automationGoalDevops": [
+                  "other",
+                  "monitoring-alerting",
+                  "reporting"
+                ],
+                "automationGoalDevopsOther": "Build workflows to automate manual processes",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "GjxXDVv1iBEVBdE4",
+                "userActivatedAt": 1765753766341,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1767113477505
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-01-30",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}
