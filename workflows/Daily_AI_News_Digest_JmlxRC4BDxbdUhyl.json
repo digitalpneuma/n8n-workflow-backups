@@ -1,0 +1,592 @@
+{
+  "updatedAt": "2025-11-01T15:49:36.000Z",
+  "createdAt": "2025-11-01T15:37:01.566Z",
+  "id": "JmlxRC4BDxbdUhyl",
+  "name": "Daily AI News Digest",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "d718a7a5-9c1a-4271-8529-5fe7cb2cca8f",
+      "name": "Daily Digest Cron Trigger",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1.1,
+      "position": [
+        -48,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "sources",
+              "name": "sources",
+              "value": "={{ {\n  \"rss\": [\n    \"https://techcrunch.com/tag/ai/feed/\",\n    \"https://www.technologyreview.com/tag/artificial-intelligence/feed/\",\n    \"https://www.theverge.com/artificial-intelligence/rss/index.xml\",\n    \"https://venturebeat.com/category/ai/feed/\",\n    \"https://www.wired.com/category/artificial-intelligence/feed/\"\n  ]\n} }}",
+              "type": "object"
+            },
+            {
+              "id": "recipients",
+              "name": "recipients",
+              "value": "={{ {\n  \"email\": \"digest@example.com\",\n  \"slackChannels\": [\"ai-digest\", \"ai-news\"]\n} }}",
+              "type": "object"
+            },
+            {
+              "id": "digest",
+              "name": "digest",
+              "value": "={{ {\n  \"topN\": 8,\n  \"language\": \"en\"\n} }}",
+              "type": "object"
+            },
+            {
+              "id": "timeZone",
+              "name": "timeZone",
+              "value": "America/Los_Angeles",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7e888277-ad91-4a49-9691-e749687fcaf3",
+      "name": "Centralized Digest Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        192,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Centralized Digest Configuration').item.json.sources.rss[0] }}",
+        "options": {}
+      },
+      "id": "a6d1f7fb-7b2d-4739-a1b2-1bd52b8a9690",
+      "name": "Fetch TechCrunch AI RSS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        400,
+        -192
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Centralized Digest Configuration').item.json.sources.rss[1] }}",
+        "options": {}
+      },
+      "id": "5ead98fa-3110-47da-b487-9638e69b7c94",
+      "name": "Fetch MIT Tech Review AI RSS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        400,
+        -112
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Centralized Digest Configuration').item.json.sources.rss[2] }}",
+        "options": {}
+      },
+      "id": "1ceeb0e6-3ebe-471d-83e7-c57fd5cd40db",
+      "name": "Fetch The Verge AI RSS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        400,
+        -32
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Centralized Digest Configuration').item.json.sources.rss[3] }}",
+        "options": {}
+      },
+      "id": "23c03a6e-6b3e-410a-9f0b-76b7d430396a",
+      "name": "Fetch VentureBeat AI RSS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        400,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Centralized Digest Configuration').item.json.sources.rss[4] }}",
+        "options": {}
+      },
+      "id": "501e0eba-699a-4222-b397-35feca179c59",
+      "name": "Fetch Wired AI RSS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        400,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "multiplex",
+        "options": {}
+      },
+      "id": "de26b066-0cfb-41f9-8664-817b3699ff77",
+      "name": "Merge All Fetched News",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        624,
+        -32
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "744188cf-2c07-479a-bbfc-72ff37d4092d",
+      "name": "Check Article Seen SQLite",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [
+        848,
+        -32
+      ],
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "new_article",
+              "leftValue": "={{ $json.count }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "3fcfbc5a-3da2-4499-b23f-68ff9dc11bf6",
+      "name": "New or Seen",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1072,
+        -32
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "d890b13e-bfc4-480f-9407-e02b9d208074",
+      "name": "Split Into Articles",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1280,
+        -112
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "29dccd72-7e42-4555-bb92-6274ba9c22ee",
+      "name": "AI Summary Short",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1.3,
+      "position": [
+        1504,
+        -112
+      ],
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "title",
+              "name": "digestItem.title",
+              "value": "={{ $('Split Into Articles').item.json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "url",
+              "name": "digestItem.url",
+              "value": "={{ $('Split Into Articles').item.json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "source",
+              "name": "digestItem.source",
+              "value": "={{ $('Split Into Articles').item.json.creator || 'Unknown' }}",
+              "type": "string"
+            },
+            {
+              "id": "pubDate",
+              "name": "digestItem.pubDate",
+              "value": "={{ $('Split Into Articles').item.json.pubDate }}",
+              "type": "string"
+            },
+            {
+              "id": "summary",
+              "name": "digestItem.summary",
+              "value": "={{ $json.message.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "42f0f87b-c4eb-466b-87c8-f9d3c1d1249d",
+      "name": "Format Digest Entry",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        1728,
+        -112
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "59209c48-2d51-4090-a732-cae9655379ba",
+      "name": "Store Article as Seen",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [
+        1952,
+        -112
+      ],
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combinationMode": "multiplex",
+        "options": {}
+      },
+      "id": "9aacf8a5-3349-441b-9700-3bf9c897e4a0",
+      "name": "Aggregate Digest Entries",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        2160,
+        -112
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst config = $('Centralized Digest Configuration').first().json;\nconst topN = config.digest.topN;\n\n// Sort by publication date (newest first)\nconst sorted = items.sort((a, b) => {\n  const dateA = new Date(a.json['digestItem.pubDate']);\n  const dateB = new Date(b.json['digestItem.pubDate']);\n  return dateB - dateA;\n});\n\n// Take top N articles\nconst trimmed = sorted.slice(0, topN);\n\nreturn trimmed;"
+      },
+      "id": "c095db15-37f9-4133-8a1a-17ea902235b7",
+      "name": "Sort and Trim Digest",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2384,
+        -112
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst config = $('Centralized Digest Configuration').first().json;\nconst today = new Date().toISOString().split('T')[0];\n\nlet html = `\n<h2>Daily AI News Digest - ${today}</h2>\n<div style=\"font-family: Arial, sans-serif;\">\n`;\n\nitems.forEach((item, index) => {\n  const data = item.json;\n  html += `\n  <div style=\"margin-bottom: 20px; padding: 15px; border-left: 3px solid #007acc;\">\n    <h3><a href=\"${data['digestItem.url']}\" style=\"color: #007acc; text-decoration: none;\">${data['digestItem.title']}</a></h3>\n    <p style=\"color: #666; font-size: 12px;\">Source: ${data['digestItem.source']} | ${new Date(data['digestItem.pubDate']).toLocaleDateString()}</p>\n    <p>${data['digestItem.summary']}</p>\n  </div>\n  `;\n});\n\nhtml += '</div>';\n\nreturn [{ json: { htmlBody: html, subject: `Daily AI News Digest - ${today}` } }];"
+      },
+      "id": "c84decff-2a29-4813-a4c2-c57fae3d06c7",
+      "name": "Format Digest HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2608,
+        -192
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "noreply@example.com",
+        "toEmail": "={{ $('Centralized Digest Configuration').first().json.recipients.email }}",
+        "subject": "={{ $json.subject }}",
+        "options": {}
+      },
+      "id": "c703230e-b1a7-4c43-aa6a-4649309ab3bf",
+      "name": "Send Email Digest",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        2832,
+        -192
+      ],
+      "webhookId": "4ca84d5d-ef6e-488e-8145-eb66fa17ff7e"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst config = $('Centralized Digest Configuration').first().json;\nconst today = new Date().toISOString().split('T')[0];\n\nlet message = `*Daily AI News Digest - ${today}*\\n\\n`;\n\nitems.forEach((item, index) => {\n  const data = item.json;\n  message += `${index + 1}. *${data['digestItem.title']}*\\n`;\n  message += `   Source: ${data['digestItem.source']} | ${new Date(data['digestItem.pubDate']).toLocaleDateString()}\\n`;\n  message += `   ${data['digestItem.summary']}\\n`;\n  message += `   <${data['digestItem.url']}>\\n\\n`;\n});\n\nreturn [{ json: { slackMessage: message, channels: config.recipients.slackChannels } }];"
+      },
+      "id": "979891de-211a-4d87-85c3-14e9fcd950b9",
+      "name": "Format Slack Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2608,
+        -32
+      ]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $json.channels[0] }}",
+          "mode": "name"
+        },
+        "text": "={{ $json.slackMessage }}",
+        "otherOptions": {}
+      },
+      "id": "31a06298-bba1-42cc-828b-32d3c9215a7f",
+      "name": "Post Slack Digest",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [
+        2832,
+        -32
+      ],
+      "webhookId": "a6ec0469-9f6c-42f9-b84e-726ca9624e4a"
+    },
+    {
+      "parameters": {},
+      "id": "313b8cf5-97e5-46c3-8f4e-6cae7831d3b7",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        3040,
+        -112
+      ]
+    }
+  ],
+  "connections": {
+    "Centralized Digest Configuration": {
+      "main": [
+        [
+          {
+            "node": "Fetch TechCrunch AI RSS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch MIT Tech Review AI RSS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch The Verge AI RSS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch VentureBeat AI RSS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Wired AI RSS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch TechCrunch AI RSS": {
+      "main": [
+        [
+          {
+            "node": "Merge All Fetched News",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch MIT Tech Review AI RSS": {
+      "main": [
+        [
+          {
+            "node": "Merge All Fetched News",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "New or Seen": {
+      "main": [
+        [
+          {
+            "node": "Split Into Articles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Digest Entries": {
+      "main": [
+        [
+          {
+            "node": "Sort and Trim Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort and Trim Digest": {
+      "main": [
+        [
+          {
+            "node": "Format Digest HTML",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Format Slack Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Digest HTML": {
+      "main": [
+        [
+          {
+            "node": "Send Email Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email Digest": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Slack Message": {
+      "main": [
+        [
+          {
+            "node": "Post Slack Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post Slack Digest": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "c11a1d75-b745-47a6-9b84-b1b35fa82230",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-13T17:40:11.847Z",
+      "createdAt": "2025-12-13T17:40:11.847Z",
+      "role": "workflow:owner",
+      "workflowId": "JmlxRC4BDxbdUhyl",
+      "projectId": "HZqYjnNmPLW2kkrP",
+      "project": {
+        "updatedAt": "2025-12-12T12:37:29.393Z",
+        "createdAt": "2025-12-12T12:34:20.173Z",
+        "id": "HZqYjnNmPLW2kkrP",
+        "name": "Miguel Simon <miguel.simon@digitalpneuma.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-12-12T12:34:20.173Z",
+            "createdAt": "2025-12-12T12:34:20.173Z",
+            "userId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+            "projectId": "HZqYjnNmPLW2kkrP",
+            "user": {
+              "updatedAt": "2026-01-31T12:34:46.000Z",
+              "createdAt": "2025-12-12T12:34:19.617Z",
+              "id": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+              "email": "miguel.simon@digitalpneuma.com",
+              "firstName": "Miguel",
+              "lastName": "Simon",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-12-12T12:39:28.094Z",
+                "personalization_survey_n8n_version": "1.123.5",
+                "automationGoalDevops": [
+                  "other",
+                  "monitoring-alerting",
+                  "reporting"
+                ],
+                "automationGoalDevopsOther": "Build workflows to automate manual processes",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "GjxXDVv1iBEVBdE4",
+                "userActivatedAt": 1765753766341,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1767113477505
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-01-30",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}
