@@ -1,0 +1,327 @@
+{
+  "updatedAt": "2025-08-18T12:01:54.000Z",
+  "createdAt": "2025-08-18T12:01:09.095Z",
+  "id": "DyE2xZj50XWdZ7H5",
+  "name": "Puzzle #4 Answer",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -16,
+        256
+      ],
+      "id": "144e79c3-20d3-403b-9848-8d1ea7137d1f",
+      "name": "When chat message received",
+      "webhookId": "673b8f68-e06e-438e-bb6a-ae99ae0aa98b"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        160,
+        2384
+      ],
+      "id": "496e71e8-20bc-4312-b62a-9061c51758e0",
+      "name": "OpenRouter Chat Model"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "36fbda50-0922-4648-ac0f-5a6537014e64",
+              "name": "Title",
+              "value": "={{ $json.output.title }}",
+              "type": "string"
+            },
+            {
+              "id": "ecd160b9-bef7-4004-a831-67ffbd6eb494",
+              "name": "Setting",
+              "value": "={{ $json.output.setting }}",
+              "type": "string"
+            },
+            {
+              "id": "c5f18080-05bd-4b03-90df-1376f448d38a",
+              "name": "Genre",
+              "value": "={{ $json.output.genre }}",
+              "type": "string"
+            },
+            {
+              "id": "c1ec3bdd-8b14-4066-b877-87f7d4d810e3",
+              "name": "Characters",
+              "value": "={{ $json.output.characters.map(char => `${char.name} (${char.role}): ${char.description}`).join('\\n\\n') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        576,
+        2224
+      ],
+      "id": "a7b048e9-a57b-41c6-856f-ca4f1071f29d",
+      "name": "Output"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"title\": \"string (the title of the story)\",\n  \"setting\": \"string (a description of the story’s environment, time period, or location)\",\n  \"genre\": \"string (e.g. science fiction, fantasy, thriller, romance, etc.)\",\n  \"characters\": [\n    {\n      \"name\": \"string (name of the character)\",\n      \"role\": \"string (e.g. protagonist, antagonist, sidekick, etc.)\",\n      \"description\": \"string (a brief description of the character’s personality, appearance, or backstory)\"\n    }\n  ]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        480,
+        2384
+      ],
+      "id": "31763fcf-691b-4103-b7b2-5631d42ed24e",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# Overview\nYou are a story generator. Given a short story idea or prompt, respond in JSON with the following fields:\n\n- title (string)\n- setting (string)\n- genre (string)\n- characters (array of objects with name, role, description)\n\nOutput only valid JSON. No explanations or extra text.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        208,
+        2224
+      ],
+      "id": "ebdfd61e-7173-444d-a2ea-e997a252e491",
+      "name": "Solution"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        160,
+        256
+      ],
+      "id": "fa4363d7-28f5-438a-9725-09d5e7f65979",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "36fbda50-0922-4648-ac0f-5a6537014e64",
+              "name": "Title",
+              "value": "=",
+              "type": "string"
+            },
+            {
+              "id": "ecd160b9-bef7-4004-a831-67ffbd6eb494",
+              "name": "Setting",
+              "value": "=",
+              "type": "string"
+            },
+            {
+              "id": "c5f18080-05bd-4b03-90df-1376f448d38a",
+              "name": "Genre",
+              "value": "=",
+              "type": "string"
+            },
+            {
+              "id": "c1ec3bdd-8b14-4066-b877-87f7d4d810e3",
+              "name": "Characters",
+              "value": "=",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        256
+      ],
+      "id": "3a5628f7-f540-4452-9dda-0fc05bdb6279",
+      "name": "Desired Output"
+    },
+    {
+      "parameters": {
+        "content": "# Solution\nThis isn't the only right way to do it. Also, don't worry about the crazy JavaScript functions in the characters variable. I just did that to clean everything up so you guys could see it better. ",
+        "height": 480,
+        "width": 1060,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        2064
+      ],
+      "id": "d73fe4b1-9c0e-4075-8c6f-bc8167f062fa",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## 🧩 Puzzle Challenge: Build a Structured Output Parser for Story Generation\n\nYou’re working with an **AI agent** that generates creative stories based on a short input prompt.  \nYour task is to configure the system so that the agent’s output is structured in a **clean JSON format**.\n\nThe final output should break the story into clearly defined parts so it’s easy to use later in your workflow.\n\n## 📝 Your Prompt Example\n“Two kids discover a hidden cave beneath their school.”\n\n## 🎯 Your Goal\nSet up the system so that when the agent receives a short prompt like this, it returns structured data with the following fields:\n- `title`\n- `setting`\n- `genre`\n- `characters` (an array of character objects)\n\n🔍 You can view the exact format you're aiming for by inspecting the **Set node titled \"Desired Output\"**.\n\n## 🧠 Hints & Tips\n- Use a **Structured Output Parser** to ensure the agent’s response is formatted properly.\n- You’ll need to configure the **system prompt** to give the model clear instructions on what structure you expect.\n- Make sure variables are passed cleanly into your **Output node**.\n- Consider brainstorming the system prompt with **ChatGPT or Claude** as a thought partner!\n\nThis one’s a bit more advanced, but it’s a great exercise in using AI as a **structured output generator** rather than just a blob of text.\n\n> 💡 Tip: Scroll down to see one solution — it’s not the only way to solve this, but it will show how everything fits together.\n\nSOLUTION is below. Don’t spoil it!\n",
+        "height": 860,
+        "width": 800
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -896,
+        16
+      ],
+      "id": "50edbb94-e78f-4473-917f-9721401fd19a",
+      "name": "Sticky Note1"
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Solution",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Solution",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Solution": {
+      "main": [
+        [
+          {
+            "node": "Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Desired Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "15ff1e19-2686-4c40-adad-1f22d332f971",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-13T17:42:34.944Z",
+      "createdAt": "2025-12-13T17:42:34.944Z",
+      "role": "workflow:owner",
+      "workflowId": "DyE2xZj50XWdZ7H5",
+      "projectId": "HZqYjnNmPLW2kkrP",
+      "project": {
+        "updatedAt": "2025-12-12T12:37:29.393Z",
+        "createdAt": "2025-12-12T12:34:20.173Z",
+        "id": "HZqYjnNmPLW2kkrP",
+        "name": "Miguel Simon <miguel.simon@digitalpneuma.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-12-12T12:34:20.173Z",
+            "createdAt": "2025-12-12T12:34:20.173Z",
+            "userId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+            "projectId": "HZqYjnNmPLW2kkrP",
+            "user": {
+              "updatedAt": "2026-01-31T12:34:46.000Z",
+              "createdAt": "2025-12-12T12:34:19.617Z",
+              "id": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+              "email": "miguel.simon@digitalpneuma.com",
+              "firstName": "Miguel",
+              "lastName": "Simon",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-12-12T12:39:28.094Z",
+                "personalization_survey_n8n_version": "1.123.5",
+                "automationGoalDevops": [
+                  "other",
+                  "monitoring-alerting",
+                  "reporting"
+                ],
+                "automationGoalDevopsOther": "Build workflows to automate manual processes",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "GjxXDVv1iBEVBdE4",
+                "userActivatedAt": 1765753766341,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1767113477505
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-01-30",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}
