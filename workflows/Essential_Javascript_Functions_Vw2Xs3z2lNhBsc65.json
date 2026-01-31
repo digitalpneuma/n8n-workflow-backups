@@ -1,0 +1,440 @@
+{
+  "updatedAt": "2025-09-11T14:14:31.000Z",
+  "createdAt": "2025-09-11T13:43:56.220Z",
+  "id": "Vw2Xs3z2lNhBsc65",
+  "name": "Essential Javascript Functions",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "# JSON.stringify()",
+        "height": 320,
+        "width": 660
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ba163dcc-cb20-4e26-8c78-3af58538787e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        1584
+      ],
+      "id": "08ee3015-acff-4f20-9f85-3f5af7086079",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "content": "# JSON.parse()",
+        "height": 320,
+        "width": 660
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        352
+      ],
+      "id": "b26b31dd-d227-49e4-ad43-6b2db896b298",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"{{ $json.query.replace(/\"/g, '') }}\",\n  \"topic\": \"general\",\n  \"search_depth\": \"basic\",\n  \"chunks_per_source\": 3,\n  \"max_results\": 1,\n  \"time_range\": null,\n  \"days\": 7,\n  \"include_answer\": true,\n  \"include_raw_content\": false,\n  \"include_images\": false,\n  \"include_image_descriptions\": false,\n  \"include_domains\": [],\n  \"exclude_domains\": []\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        384,
+        832
+      ],
+      "id": "66196977-1212-4f9a-8337-a05fe20ca0e0",
+      "name": "Tavily",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "7vchEJYvIzry0phu",
+          "name": "Tavily Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6f7a5a6a-d14e-4e29-b81e-30e24a059c38",
+              "name": "query",
+              "value": "\"pineapples on pizza\"",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        160,
+        832
+      ],
+      "id": "0d7ff74e-718f-43f3-9bde-5b67573923e8",
+      "name": "Set"
+    },
+    {
+      "parameters": {
+        "content": "# .replace(/\"/g, '')",
+        "height": 360,
+        "width": 660
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        688
+      ],
+      "id": "155e56fd-c2df-4253-acc5-013c227413e3",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "# $now\n## .format()",
+        "height": 360,
+        "width": 660
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        1072
+      ],
+      "id": "3298f7a0-26d0-4351-b940-b58d58ca94a8",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c9517d50-49f1-4c7a-9287-cb26be5b35c1",
+              "name": "now",
+              "value": "={{ $now.format('yyyy-MM-dd') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        272,
+        1200
+      ],
+      "id": "f977e311-9310-462e-843f-9733f7e82920",
+      "name": "$now"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8af5eda1-b061-49ce-b006-4bdd90c2834e",
+              "name": "example",
+              "value": "{\"name\":\"Nate\",\"email\":\"nate@example.com\",\"company\":{\"name\":\"TrueHorizon AI\",\"location\":\"Salt Lake City\"}}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        160,
+        128
+      ],
+      "id": "227beb42-bdde-4fa4-b708-c78916766dfe",
+      "name": "Object"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7e40b159-fd73-4439-8d9d-b9c2344df11d",
+              "name": "stringify",
+              "value": "={{ JSON.stringify($json.example) }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        384,
+        128
+      ],
+      "id": "fcd4d5c0-01ea-4e79-9c5f-576802507c1e",
+      "name": "String"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8af5eda1-b061-49ce-b006-4bdd90c2834e",
+              "name": "example",
+              "value": "{\"name\":\"Nate\",\"email\":\"nate@example.com\",\"company\":{\"name\":\"TrueHorizon AI\",\"location\":\"Salt Lake City\"}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        160,
+        464
+      ],
+      "id": "6a95341f-e76c-4206-8944-5de603c681c0",
+      "name": "String_"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d07994cb-b8cd-4e6d-a94c-314f25ffc7d4",
+              "name": "stringify",
+              "value": "={{ $json.example }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        384,
+        464
+      ],
+      "id": "461e8195-b2bb-442b-9328-e13b39a26ce9",
+      "name": "Object_"
+    },
+    {
+      "parameters": {
+        "content": "# .join()",
+        "height": 340,
+        "width": 660
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        1440
+      ],
+      "id": "06aba79e-7945-4b2d-975c-9ea41b700c60",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c9517d50-49f1-4c7a-9287-cb26be5b35c1",
+              "name": "animals",
+              "value": "=[\"dog\",\"cat\",\"monkey\",\"tiger\"]",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        128,
+        1584
+      ],
+      "id": "17e663e2-c4a6-4df8-9657-6ea852b4ab15",
+      "name": "List"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8b55cf6b-6e85-4c8d-8a20-f4f269af8df5",
+              "name": "list",
+              "value": "={{ $json.animals.join(\" \") }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        352,
+        1584
+      ],
+      "id": "95b7b7da-22fe-4db7-9feb-438be3c2b6f2",
+      "name": "Join"
+    }
+  ],
+  "connections": {
+    "Set": {
+      "main": [
+        [
+          {
+            "node": "Tavily",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Object": {
+      "main": [
+        [
+          {
+            "node": "String",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "String_": {
+      "main": [
+        [
+          {
+            "node": "Object_",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List": {
+      "main": [
+        [
+          {
+            "node": "Join",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "e8f72dc9-e631-4a4f-b147-510fe46ef141",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-13T17:40:26.033Z",
+      "createdAt": "2025-12-13T17:40:26.033Z",
+      "role": "workflow:owner",
+      "workflowId": "Vw2Xs3z2lNhBsc65",
+      "projectId": "HZqYjnNmPLW2kkrP",
+      "project": {
+        "updatedAt": "2025-12-12T12:37:29.393Z",
+        "createdAt": "2025-12-12T12:34:20.173Z",
+        "id": "HZqYjnNmPLW2kkrP",
+        "name": "Miguel Simon <miguel.simon@digitalpneuma.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-12-12T12:34:20.173Z",
+            "createdAt": "2025-12-12T12:34:20.173Z",
+            "userId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+            "projectId": "HZqYjnNmPLW2kkrP",
+            "user": {
+              "updatedAt": "2026-01-31T12:34:46.000Z",
+              "createdAt": "2025-12-12T12:34:19.617Z",
+              "id": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+              "email": "miguel.simon@digitalpneuma.com",
+              "firstName": "Miguel",
+              "lastName": "Simon",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-12-12T12:39:28.094Z",
+                "personalization_survey_n8n_version": "1.123.5",
+                "automationGoalDevops": [
+                  "other",
+                  "monitoring-alerting",
+                  "reporting"
+                ],
+                "automationGoalDevopsOther": "Build workflows to automate manual processes",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "GjxXDVv1iBEVBdE4",
+                "userActivatedAt": 1765753766341,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1767113477505
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-01-30",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}
