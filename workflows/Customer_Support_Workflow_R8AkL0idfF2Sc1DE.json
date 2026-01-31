@@ -1,0 +1,470 @@
+{
+  "updatedAt": "2025-08-09T14:53:15.000Z",
+  "createdAt": "2025-08-08T21:05:40.685Z",
+  "id": "R8AkL0idfF2Sc1DE",
+  "name": "Customer Support Workflow",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "\n## 2) Customer Support Workflow",
+        "height": 80,
+        "width": 400,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -912,
+        -288
+      ],
+      "typeVersion": 1,
+      "id": "b03d5880-cf45-4d01-b25b-c73bfd9214d3",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -752,
+        -96
+      ],
+      "id": "2b0af307-a55b-4141-bd49-e8a6935d971f",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "j7HRJjgLfSBAPIzR",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $json.text }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "Customer Support",
+              "description": "An email that is related to helping out a customer. They may be asking questions about our policies or questions about our products or services."
+            },
+            {
+              "category": "Other",
+              "description": "Any email that is not customer support related."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        -544,
+        -96
+      ],
+      "id": "75086cf9-efc6-4280-9357-6423763e3659",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-4o-mini",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -624,
+        112
+      ],
+      "id": "b36a2f1f-ad70-4154-9331-375a5b3b3032",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "O4Ms8iUOOIP77I0Z",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        112
+      ],
+      "id": "9de21ede-559e-4079-b59c-cb5973793940",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Gmail Trigger').item.json.text }}",
+        "options": {
+          "systemMessage": "=# Overview\nYou are a customer support agent for Tech Haven. Your job is to respond to incoming emails with relevant information using your knowledgeBase tool.\n\n## Instructions\n- Your output should be friendly and use emojis\n- Sign off as Mr. Helpful from Tech Haven Solutions\n\n## Output\n- Output only the body content of the email"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -160,
+        -240
+      ],
+      "id": "56a2d9ab-4618-4cc7-ac0a-49fee60ede2a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "google/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        -64
+      ],
+      "id": "b903f642-c2ea-4a37-8933-65c050b8f3e3",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "O4Ms8iUOOIP77I0Z",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Call this tool to access Policy and FAQ information",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "demo",
+          "mode": "list",
+          "cachedResultName": "demo"
+        },
+        "options": {
+          "pineconeNamespace": "FAQ"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        -16,
+        -16
+      ],
+      "id": "c9b864bf-4f14-42c0-9eaf-300d1b5514e6",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "oRPJEXhXrwIrbqf9",
+          "name": "PineconeApi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        80,
+        176
+      ],
+      "id": "bd2f3275-4f0d-4380-aab3-855872184b0e",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "IfZ7w9jey4t4KuBS",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "emailType": "text",
+        "message": "={{ $json.output }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        400,
+        -240
+      ],
+      "id": "758910f7-e608-4e8e-898e-31f7ecd5830b",
+      "name": "Reply to a message",
+      "webhookId": "54d6233c-cdec-49c4-847c-784ebb941600",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "j7HRJjgLfSBAPIzR",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        192,
+        -240
+      ],
+      "id": "3365375f-479a-4fa2-866d-ad62b8b51b64",
+      "name": "Add label to message",
+      "webhookId": "b61c5a3b-963a-4afb-b705-0b491b9af94b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "j7HRJjgLfSBAPIzR",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Add label to message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add label to message": {
+      "main": [
+        [
+          {
+            "node": "Reply to a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Gmail Trigger": [
+      {
+        "json": {
+          "id": "1988b85a13f7bdb9",
+          "threadId": "1988b84e88087e13",
+          "labelIds": [
+            "UNREAD",
+            "IMPORTANT",
+            "Label_2399396375839667556",
+            "SENT"
+          ],
+          "sizeEstimate": 801,
+          "headers": {
+            "mime-version": "MIME-Version: 1.0",
+            "date": "Date: Fri, 8 Aug 2025 17:10:47 -0400",
+            "message-id": "Message-ID: <CAF_F_ZwXN6_c8suPbADjN_Q+yuqiGsthEjXkzkoXsKNEsHQmRA@mail.gmail.com>",
+            "subject": "Subject: Question",
+            "from": "From: Miguel Simon <miguel.simon@digitalpneuma.com>",
+            "to": "To: Miguel Simon <miguel@digitalpneuma.com>",
+            "content-type": "Content-Type: multipart/alternative; boundary=\"0000000000000078a0063be102f3\""
+          },
+          "html": "<div dir=\"ltr\">What is the privacy policy? I am concerned about my data and passwords!!!<div><br></div><div>Thank  You</div></div>\n",
+          "text": "What is the privacy policy? I am concerned about my data and passwords!!!\n\nThank  You\n",
+          "textAsHtml": "<p>What is the privacy policy? I am concerned about my data and passwords!!!</p><p>Thank  You</p>",
+          "subject": "Question",
+          "date": "2025-08-08T21:10:47.000Z",
+          "to": {
+            "value": [
+              {
+                "address": "miguel@digitalpneuma.com",
+                "name": "Miguel Simon"
+              }
+            ],
+            "html": "<span class=\"mp_address_group\"><span class=\"mp_address_name\">Miguel Simon</span> &lt;<a href=\"mailto:miguel@digitalpneuma.com\" class=\"mp_address_email\">miguel@digitalpneuma.com</a>&gt;</span>",
+            "text": "\"Miguel Simon\" <miguel@digitalpneuma.com>"
+          },
+          "from": {
+            "value": [
+              {
+                "address": "miguel.simon@digitalpneuma.com",
+                "name": "Miguel Simon"
+              }
+            ],
+            "html": "<span class=\"mp_address_group\"><span class=\"mp_address_name\">Miguel Simon</span> &lt;<a href=\"mailto:miguel.simon@digitalpneuma.com\" class=\"mp_address_email\">miguel.simon@digitalpneuma.com</a>&gt;</span>",
+            "text": "\"Miguel Simon\" <miguel.simon@digitalpneuma.com>"
+          },
+          "messageId": "<CAF_F_ZwXN6_c8suPbADjN_Q+yuqiGsthEjXkzkoXsKNEsHQmRA@mail.gmail.com>"
+        }
+      }
+    ]
+  },
+  "versionId": "7a1f2f36-61a8-409d-bb2e-f2383ba3f08a",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-13T17:40:09.480Z",
+      "createdAt": "2025-12-13T17:40:09.480Z",
+      "role": "workflow:owner",
+      "workflowId": "R8AkL0idfF2Sc1DE",
+      "projectId": "HZqYjnNmPLW2kkrP",
+      "project": {
+        "updatedAt": "2025-12-12T12:37:29.393Z",
+        "createdAt": "2025-12-12T12:34:20.173Z",
+        "id": "HZqYjnNmPLW2kkrP",
+        "name": "Miguel Simon <miguel.simon@digitalpneuma.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-12-12T12:34:20.173Z",
+            "createdAt": "2025-12-12T12:34:20.173Z",
+            "userId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+            "projectId": "HZqYjnNmPLW2kkrP",
+            "user": {
+              "updatedAt": "2026-01-31T12:34:46.000Z",
+              "createdAt": "2025-12-12T12:34:19.617Z",
+              "id": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+              "email": "miguel.simon@digitalpneuma.com",
+              "firstName": "Miguel",
+              "lastName": "Simon",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-12-12T12:39:28.094Z",
+                "personalization_survey_n8n_version": "1.123.5",
+                "automationGoalDevops": [
+                  "other",
+                  "monitoring-alerting",
+                  "reporting"
+                ],
+                "automationGoalDevopsOther": "Build workflows to automate manual processes",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "GjxXDVv1iBEVBdE4",
+                "userActivatedAt": 1765753766341,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1767113477505
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-01-30",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}
