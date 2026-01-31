@@ -1,0 +1,834 @@
+{
+  "updatedAt": "2025-10-18T16:40:48.000Z",
+  "createdAt": "2025-10-13T11:16:55.444Z",
+  "id": "Po73rLXgZv2VK5d6",
+  "name": "Upload to Supabase",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ff64e924-6d9e-4e82-bde6-f305334db345",
+              "name": "=file_id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        304,
+        0
+      ],
+      "id": "4f28c4ce-3060-41e2-8f98-ebd69749bbc8",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        720,
+        0
+      ],
+      "id": "dde9ab3f-92bf-4241-8677-e1e3acbd57be",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        928,
+        0
+      ],
+      "id": "d50070f9-9c85-4302-b110-e5acafc0b898",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "VlP7cJDSXT11vbGe",
+          "name": "Supabase account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "textSplittingMode": "custom",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "=file_id",
+                "value": "={{ $('Edit Fields').item.json.file_id }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        1040,
+        176
+      ],
+      "id": "0e9808ee-0e0d-441e-84ed-9b8b6f3205d1",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "options": {
+          "dimensions": 1536
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        880,
+        208
+      ],
+      "id": "015baaf7-fbd7-4ace-a34a-55daec4e9ac8",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "IfZ7w9jey4t4KuBS",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        304
+      ],
+      "id": "9468bc64-8647-49f6-8d20-a7d1b41e808f",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1lSvjiUOxkCN9sQMP5jklRzA83WNJUaTE",
+          "mode": "list",
+          "cachedResultName": "Projects",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1lSvjiUOxkCN9sQMP5jklRzA83WNJUaTE"
+        },
+        "event": "fileUpdated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        64,
+        512
+      ],
+      "id": "c9e97c58-f47a-4860-97bc-40cfbe65e44a",
+      "name": "File Updated",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "SUnfsHom4i3gEWxZ",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1lSvjiUOxkCN9sQMP5jklRzA83WNJUaTE",
+          "mode": "list",
+          "cachedResultName": "Projects",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1lSvjiUOxkCN9sQMP5jklRzA83WNJUaTE"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        96,
+        0
+      ],
+      "id": "7765cf8b-a5cc-4712-8fd5-cd8592330933",
+      "name": "New File",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "SUnfsHom4i3gEWxZ",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.file_id }}",
+          "mode": "id"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "text/plain"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        512,
+        0
+      ],
+      "id": "cc5e29e0-f28d-437e-826d-1ebd1bf56a21",
+      "name": "Downloading file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "SUnfsHom4i3gEWxZ",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "tableId": "documents",
+        "filterType": "string",
+        "filterString": "=metadata->>file_id=like.*{{ $json.id }}*"
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        224,
+        512
+      ],
+      "id": "e6179183-d968-49c5-80b6-1596de0a76f3",
+      "name": "Delete a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "VlP7cJDSXT11vbGe",
+          "name": "Supabase account 4"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        544,
+        512
+      ],
+      "id": "f6123b31-6989-48a9-8aac-8204045e23fe",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.file_id }}",
+          "mode": "id"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "text/plain"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        704,
+        512
+      ],
+      "id": "f9318404-8183-4fb3-bde6-dec00a2a6cb6",
+      "name": "Download file 2",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "SUnfsHom4i3gEWxZ",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        880,
+        512
+      ],
+      "id": "2ed5c447-7d01-442d-9c36-9d15df348d05",
+      "name": "Extract from File1"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        1072,
+        512
+      ],
+      "id": "ddc5459f-d077-4ee1-808d-ef7a4c037d51",
+      "name": "Supabase Vector Store1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "VlP7cJDSXT11vbGe",
+          "name": "Supabase account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "textSplittingMode": "custom",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "=file_id",
+                "value": "={{ $('Limit').item.json.file_id }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        1184,
+        688
+      ],
+      "id": "b2684921-7ffa-486b-9de7-5a27c82c1058",
+      "name": "Default Data Loader1"
+    },
+    {
+      "parameters": {
+        "options": {
+          "dimensions": 1536
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1072,
+        720
+      ],
+      "id": "8698ba17-1a76-48a0-8d3f-32c601a291e6",
+      "name": "Embeddings OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "IfZ7w9jey4t4KuBS",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        1264,
+        816
+      ],
+      "id": "5f92605a-c30c-40ae-aec1-10909a934033",
+      "name": "Recursive Character Text Splitter1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "819afb8e-9df4-44ab-b98f-80a808a3f49f",
+              "name": "=file_id",
+              "value": "={{ $('File Updated').item.json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        384,
+        512
+      ],
+      "id": "8170588a-6206-4aea-bf6d-5e46492c08f5",
+      "name": "Set ID 2"
+    }
+  ],
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Downloading file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "New File": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Downloading file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "File Updated": {
+      "main": [
+        [
+          {
+            "node": "Delete a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete a row": {
+      "main": [
+        [
+          {
+            "node": "Set ID 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Download file 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file 2": {
+      "main": [
+        [
+          {
+            "node": "Extract from File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader1": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter1": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader1",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File1": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set ID 2": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:File Updated": {
+      "lastTimeChecked": "2025-10-13T12:30:52Z"
+    },
+    "node:New File": {
+      "lastTimeChecked": "2025-10-13T12:30:52Z"
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Extract from File": [
+      {
+        "json": {
+          "data": "Project Brief: Project Mountain\r\n \r\nProject Name:\r\n \r\nProject Mountain - Al-Powered Employee Feedback Analysis Tool\r\n \r\nClient Name:\r\n \r\nSummit Enterprises\r\n \r\nProject Overview:\r\n \r\nSummit Enterprises is developing Project Mountain, an Al-powered tool to analyze employee feedback from surveys and other communication channels. The tool will identify trends, sentiment, and actionable insights to help HR teams improve workplace satisfaction.\r\n \r\nObjectives:\r\n \r\n1.            Analyze employee feedback for sentiment and trends.\r\n2.            Provide actionable recommendations for HR teams.\r\n3.            Integrate with Google Forms and Typeform.\r\n \r\nKey Features:\r\n \r\n1.            Sentiment Analysis: Detect sentiment in feedback.\r\n2.            Trend Identification: Highlight recurring themes.\r\n3.            Dashboards: Visualize data insights\r\n4.            Recommendations: Suggest HR actions.\r\n \r\nProject Team:\r\n \r\n•                Client Lead: Sarah Blake (Head of HR, Summit Enterprises)\r\n•                Project Manager: John Matthews (Uppit AI)\r\n•                Al Developer: Priya Kapoor\r\n•                Data Analyst: Ethan Williams\r\n•                UI/UX Designer: Emily Chen\r\n \r\nDeliverables:\r\n \r\n1.            AI analysis tool with dashboards\r\n2.            Integration with Google Forms and Typeform\r\n3.            Training session and user guide\r\n4.            Post launch technical support (6 months)\r\nTimeline:\r\n \r\n·          Kickoff Meeting: Nov 27, 2024\r\n·          Prototype Completion: Dec 15, 2024\r\n·          Final Delivery: Jan 10, 2025\r\n \r\nBudget:\r\n \r\n$35,000\r\n \r\nAction Items:\r\n \r\n1.            Collect Feedback Samples: Sarah Blake provides sample survey data. (Due Nov 29)\r\n2.            Define Metrics: John Matthews aligns on key analysis goals. (Due Nov 30)\r\n3.            Build Al Tool: Priya Kapoor develops the analysis model. (Due Dec 10)\r\n4.            Design Dashboard: Emily Chen creates data visualization interface. (Due Dec 12)\r\n5.            Integrate Tools: Ethan Williams sets up Google Forms and Typeform connections. (Due Dec 15)\r\n6.            Test & Refine: Team conducts testing and final adjustments. (Due Jan 5)\r\n7.            Deliver Training: John Matthews hosts a training session. (Due Jan 10)\r\n \r\nContact:\r\n·          Client Contact: Sarah Blake (sarah.blake@summitenterprises.com)\r\n·          Project Manager: John Matthews (john.matthews@uppit.ai)"
+        },
+        "binary": {}
+      }
+    ],
+    "Extract from File1": [
+      {
+        "json": {
+          "data": "Project Brief: Project Mountain\r\n \r\nProject Name:\r\n \r\nProject Mountain - Al-Powered Employee Feedback Analysis Tool\r\n \r\nClient Name:\r\n \r\nSummit Enterprises\r\n \r\nProject Overview:\r\n \r\nSummit Enterprises is developing Project Mountain, an Al-powered tool to analyze employee feedback from surveys and other communication channels. The tool will identify trends, sentiment, and actionable insights to help HR teams improve workplace satisfaction.\r\n \r\nObjectives:\r\n \r\n1.            Analyze employee feedback for sentiment and trends.\r\n2.            Provide actionable recommendations for HR teams.\r\n3.            Integrate with Google Forms and Typeform.\r\n \r\nKey Features:\r\n \r\n1.            Sentiment Analysis: Detect sentiment in feedback.\r\n2.            Trend Identification: Highlight recurring themes.\r\n3.            Dashboards: Visualize data insights\r\n4.            Recommendations: Suggest HR actions.\r\n \r\nProject Team:\r\n \r\n•                Client Lead: Sarah Blake (Head of HR, Summit Enterprises)\r\n•                Project Manager: John Matthews (Uppit AI)\r\n•                Al Developer: Priya Kapoor\r\n•                Data Analyst: Ethan Williams\r\n•                UI/UX Designer: Emily Chen\r\n \r\nDeliverables:\r\n \r\n1.            AI analysis tool with dashboards\r\n2.            Integration with Google Forms and Typeform\r\n3.            Training session and user guide\r\n4.            Post launch technical support (6 months)\r\nTimeline:\r\n \r\n·          Kickoff Meeting: Nov 27, 2024\r\n·          Prototype Completion: Dec 15, 2024\r\n·          Final Delivery: Jan 10, 2025\r\n \r\nBudget:\r\n \r\n$35,000\r\n \r\nAction Items:\r\n \r\n1.            Collect Feedback Samples: Sarah Blake provides sample survey data. (Due Nov 29)\r\n2.            Define Metrics: John Matthews aligns on key analysis goals. (Due Nov 30)\r\n3.            Build Al Tool: Priya Kapoor develops the analysis model. (Due Dec 10)\r\n4.            Design Dashboard: Emily Chen creates data visualization interface. (Due Dec 12)\r\n5.            Integrate Tools: Ethan Williams sets up Google Forms and Typeform connections. (Due Dec 15)\r\n6.            Test & Refine: Team conducts testing and final adjustments. (Due Jan 5)\r\n7.            Deliver Training: John Matthews hosts a training session. (Due Jan 10)\r\n \r\nContact:\r\n·          Client Contact: Sarah Blake (sarah.blake@summitenterprises.com)\r\n·          Project Manager: John Matthews (john.matthews@uppit.ai)"
+        }
+      }
+    ],
+    "New File": [
+      {
+        "json": {
+          "exportLinks": {
+            "application/rtf": "https://docs.google.com/feeds/download/documents/export/Export?id=16LAG25XrWrBONxfS6lh8DaZ7E-wleUZlOQk3EBFLvS4&exportFormat=rtf",
+            "application/vnd.oasis.opendocument.text": "https://docs.google.com/feeds/download/documents/export/Export?id=16LAG25XrWrBONxfS6lh8DaZ7E-wleUZlOQk3EBFLvS4&exportFormat=odt",
+            "text/html": "https://docs.google.com/feeds/download/documents/export/Export?id=16LAG25XrWrBONxfS6lh8DaZ7E-wleUZlOQk3EBFLvS4&exportFormat=html",
+            "application/pdf": "https://docs.google.com/feeds/download/documents/export/Export?id=16LAG25XrWrBONxfS6lh8DaZ7E-wleUZlOQk3EBFLvS4&exportFormat=pdf",
+            "text/x-markdown": "https://docs.google.com/feeds/download/documents/export/Export?id=16LAG25XrWrBONxfS6lh8DaZ7E-wleUZlOQk3EBFLvS4&exportFormat=markdown",
+            "text/markdown": "https://docs.google.com/feeds/download/documents/export/Export?id=16LAG25XrWrBONxfS6lh8DaZ7E-wleUZlOQk3EBFLvS4&exportFormat=markdown",
+            "application/epub+zip": "https://docs.google.com/feeds/download/documents/export/Export?id=16LAG25XrWrBONxfS6lh8DaZ7E-wleUZlOQk3EBFLvS4&exportFormat=epub",
+            "application/zip": "https://docs.google.com/feeds/download/documents/export/Export?id=16LAG25XrWrBONxfS6lh8DaZ7E-wleUZlOQk3EBFLvS4&exportFormat=zip",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "https://docs.google.com/feeds/download/documents/export/Export?id=16LAG25XrWrBONxfS6lh8DaZ7E-wleUZlOQk3EBFLvS4&exportFormat=docx",
+            "text/plain": "https://docs.google.com/feeds/download/documents/export/Export?id=16LAG25XrWrBONxfS6lh8DaZ7E-wleUZlOQk3EBFLvS4&exportFormat=txt"
+          },
+          "parents": [
+            "1lSvjiUOxkCN9sQMP5jklRzA83WNJUaTE"
+          ],
+          "lastModifyingUser": {
+            "displayName": "Miguel Simon",
+            "kind": "drive#user",
+            "me": true,
+            "permissionId": "15484941207648369079",
+            "emailAddress": "miguel.simon@digitalpneuma.com",
+            "photoLink": "https://lh3.googleusercontent.com/a/ACg8ocJdHz8abYfdrJ0hQbIrnVV2F6mEqp6MXj3HuCbFaTflsg6Xiw=s64"
+          },
+          "owners": [
+            {
+              "displayName": "Miguel Simon",
+              "kind": "drive#user",
+              "me": true,
+              "permissionId": "15484941207648369079",
+              "emailAddress": "miguel.simon@digitalpneuma.com",
+              "photoLink": "https://lh3.googleusercontent.com/a/ACg8ocJdHz8abYfdrJ0hQbIrnVV2F6mEqp6MXj3HuCbFaTflsg6Xiw=s64"
+            }
+          ],
+          "permissions": [
+            {
+              "kind": "drive#permission",
+              "id": "15484941207648369079",
+              "type": "user",
+              "emailAddress": "miguel.simon@digitalpneuma.com",
+              "role": "owner",
+              "displayName": "Miguel Simon",
+              "photoLink": "https://lh3.googleusercontent.com/a/ACg8ocJdHz8abYfdrJ0hQbIrnVV2F6mEqp6MXj3HuCbFaTflsg6Xiw=s64",
+              "deleted": false,
+              "pendingOwner": false
+            }
+          ],
+          "spaces": [
+            "drive"
+          ],
+          "capabilities": {
+            "canAcceptOwnership": false,
+            "canAddChildren": false,
+            "canAddMyDriveParent": false,
+            "canChangeCopyRequiresWriterPermission": true,
+            "canChangeItemDownloadRestriction": true,
+            "canChangeSecurityUpdateEnabled": false,
+            "canChangeViewersCanCopyContent": true,
+            "canComment": true,
+            "canCopy": true,
+            "canDelete": true,
+            "canDisableInheritedPermissions": false,
+            "canDownload": true,
+            "canEdit": true,
+            "canEnableInheritedPermissions": true,
+            "canListChildren": false,
+            "canModifyContent": true,
+            "canModifyContentRestriction": true,
+            "canModifyEditorContentRestriction": true,
+            "canModifyOwnerContentRestriction": true,
+            "canModifyLabels": false,
+            "canMoveChildrenWithinDrive": false,
+            "canMoveItemIntoTeamDrive": true,
+            "canMoveItemOutOfDrive": true,
+            "canMoveItemWithinDrive": true,
+            "canReadLabels": false,
+            "canReadRevisions": true,
+            "canRemoveChildren": false,
+            "canRemoveContentRestriction": false,
+            "canRemoveMyDriveParent": true,
+            "canRename": true,
+            "canShare": true,
+            "canTrash": true,
+            "canUntrash": true
+          },
+          "permissionIds": [
+            "15484941207648369079"
+          ],
+          "linkShareMetadata": {
+            "securityUpdateEligible": false,
+            "securityUpdateEnabled": true
+          },
+          "downloadRestrictions": {
+            "itemDownloadRestriction": {
+              "restrictedForReaders": false,
+              "restrictedForWriters": false
+            },
+            "effectiveDownloadRestrictionWithContext": {
+              "restrictedForReaders": false,
+              "restrictedForWriters": false
+            }
+          },
+          "kind": "drive#file",
+          "id": "16LAG25XrWrBONxfS6lh8DaZ7E-wleUZlOQk3EBFLvS4",
+          "name": "Project Snow",
+          "mimeType": "application/vnd.google-apps.document",
+          "starred": false,
+          "trashed": false,
+          "explicitlyTrashed": false,
+          "version": "12",
+          "webViewLink": "https://docs.google.com/document/d/16LAG25XrWrBONxfS6lh8DaZ7E-wleUZlOQk3EBFLvS4/edit?usp=drivesdk",
+          "iconLink": "https://drive-thirdparty.googleusercontent.com/16/type/application/vnd.google-apps.document",
+          "hasThumbnail": true,
+          "thumbnailLink": "https://lh3.googleusercontent.com/drive-storage/AJQWtBOpRDBYfdz34621NKAiqsOoh_meL2IXQQIUDLFqKP3l2CWB5pmA9s4sGPckAyC64c1gK5AxMWIn9EBQqvGKGsVXTKw4FeQt1IVi6NKrEbLHnQ97HjNWD8FOojzePA=s220",
+          "thumbnailVersion": "3",
+          "viewedByMe": true,
+          "viewedByMeTime": "2025-10-13T12:28:37.454Z",
+          "createdTime": "2025-10-13T12:27:59.663Z",
+          "modifiedTime": "2025-10-13T12:28:37.454Z",
+          "modifiedByMeTime": "2025-10-13T12:28:37.454Z",
+          "modifiedByMe": true,
+          "shared": false,
+          "ownedByMe": true,
+          "viewersCanCopyContent": true,
+          "copyRequiresWriterPermission": false,
+          "writersCanShare": true,
+          "size": "1581",
+          "quotaBytesUsed": "1581",
+          "isAppAuthorized": false,
+          "inheritedPermissionsDisabled": false
+        }
+      }
+    ]
+  },
+  "versionId": "494deab4-9c29-41f3-8dc3-3ce8fb84b28b",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 2,
+  "shared": [
+    {
+      "updatedAt": "2025-12-13T17:43:15.227Z",
+      "createdAt": "2025-12-13T17:43:15.227Z",
+      "role": "workflow:owner",
+      "workflowId": "Po73rLXgZv2VK5d6",
+      "projectId": "HZqYjnNmPLW2kkrP",
+      "project": {
+        "updatedAt": "2025-12-12T12:37:29.393Z",
+        "createdAt": "2025-12-12T12:34:20.173Z",
+        "id": "HZqYjnNmPLW2kkrP",
+        "name": "Miguel Simon <miguel.simon@digitalpneuma.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-12-12T12:34:20.173Z",
+            "createdAt": "2025-12-12T12:34:20.173Z",
+            "userId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+            "projectId": "HZqYjnNmPLW2kkrP",
+            "user": {
+              "updatedAt": "2026-01-31T12:34:46.000Z",
+              "createdAt": "2025-12-12T12:34:19.617Z",
+              "id": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+              "email": "miguel.simon@digitalpneuma.com",
+              "firstName": "Miguel",
+              "lastName": "Simon",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-12-12T12:39:28.094Z",
+                "personalization_survey_n8n_version": "1.123.5",
+                "automationGoalDevops": [
+                  "other",
+                  "monitoring-alerting",
+                  "reporting"
+                ],
+                "automationGoalDevopsOther": "Build workflows to automate manual processes",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "GjxXDVv1iBEVBdE4",
+                "userActivatedAt": 1765753766341,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1767113477505
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-01-30",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}
