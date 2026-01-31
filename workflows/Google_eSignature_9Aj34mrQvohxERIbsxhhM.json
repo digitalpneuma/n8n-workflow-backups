@@ -1,0 +1,498 @@
+{
+  "updatedAt": "2026-01-25T22:02:29.192Z",
+  "createdAt": "2026-01-25T21:10:36.607Z",
+  "id": "9Aj34mrQvohxERIbsxhhM",
+  "name": "Google eSignature",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "6b06e4f6-769a-4148-8c2b-bc8612e02665",
+        "formTitle": "Septic System Sizing Calculator - Silver Bullet Septic Services",
+        "formDescription": "Complete this form to calculate the required septic system size and receive a contract for signature",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Date",
+              "fieldType": "date",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Customer Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email Address",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Phone Number",
+              "fieldType": "number",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Property Address (Street, City, Postal Code)",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.1,
+      "position": [
+        -800,
+        1120
+      ],
+      "id": "fb6d180c-2e26-42c1-850d-6ed592a38011",
+      "name": "Form Trigger",
+      "webhookId": "6b06e4f6-769a-4148-8c2b-bc8612e02665"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get input data from form\nconst formData = $input.item.json;\n\n// Extract form fields with NEW field names\nconst date = formData['Date'];\nconst customerName = formData['Customer Name'];\nconst email = formData['Email Address'];\nconst phone = formData['Phone Number'];\nconst address = formData['Property Address (Street, City, Postal Code)'];\nconst bedrooms = parseInt(formData['Number of Bedrooms (including bedrooms in the basement)']) || 0;\nconst sqFeet = parseFloat(formData['Total Heated Living Space (Exclude square feet of basement, unheated porches, verandas, patios or garages)']) || 0;\n\n// NEW: Walkout basement question\nconst hasWalkoutBasement = formData['Is your basement a walkout with more than 50% exposed to the outside sunlight?'];\nconst basementSqFeet = (hasWalkoutBasement === 'Yes') ? (parseFloat(formData['If yes, add the basement square footage here']) || 0) : 0;\n\n// Fixture counts with NEW field names\nconst bathrooms = parseInt(formData['Number of 3 or 4+ piece bathrooms on any floor including basement, garage or shop']) || 0;\nconst powderRooms = parseInt(formData['2-piece Powder rooms on any floor including basement, garage or shop']) || 0;\nconst showers = parseInt(formData['Extra Shower/bathtub (1 head)']) || 0;  // ADDED BACK\nconst bidets = parseInt(formData['Bidets']) || 0;\nconst kitchenSinks = parseInt(formData['Kitchen sinks (a double sink is considered 1 sink but an island sink counts as an extra kitchen sink)']) || 0;\nconst dishwashers = parseInt(formData['Dishwashers']) || 0;\nconst washingMachines = parseInt(formData['Clothes washing machines']) || 0;\nconst laundryTubs = parseInt(formData['Laundry tubs']) || 0;\nconst otherSinks = parseInt(formData['Any other sinks like Mud room sinks or garage sinks, pet washing sinks etc']) || 0;\nconst basementFloorDrains = parseInt(formData['Basement Floor Drain (if home is 20 years old or newer)']) || 0;\n\n// ========================================\n// 1. CONVERT SQUARE FEET TO SQUARE METERS\n// ========================================\n// IMPORTANT: Add basement sqft if walkout basement (goes to patio/outside)\nconst totalSqFeet = sqFeet + basementSqFeet;\nconst sqMeters = totalSqFeet * 0.09294;\n\n// ========================================\n// 2. CALCULATE BEDROOM FLOW RATE\n// ========================================\nlet bedroomBaseFlow = 0;\nif (bedrooms === 1) bedroomBaseFlow = 750;\nelse if (bedrooms === 2) bedroomBaseFlow = 1100;\nelse if (bedrooms === 3) bedroomBaseFlow = 1600;\nelse if (bedrooms === 4) bedroomBaseFlow = 2000;\nelse if (bedrooms >= 5) bedroomBaseFlow = 2500;\n\nconst additionalBedroomFlow = bedrooms > 5 ? (bedrooms - 5) * 500 : 0;\nconst totalBedroomFlow = bedroomBaseFlow + additionalBedroomFlow;\n\n// ========================================\n// 3. CALCULATE LIVING AREA FLOW\n// ========================================\nlet livingAreaFlow = 0;\nlet area_0_200 = 0;\nlet area_200_400 = 0;\nlet area_400_600 = 0;\nlet area_600_plus = 0;\n\nif (sqMeters > 200) {\n  area_0_200 = 200;\n  if (sqMeters > 400) {\n    area_200_400 = 200;\n    if (sqMeters > 600) {\n      area_400_600 = 200;\n      area_600_plus = sqMeters - 600;\n    } else {\n      area_400_600 = sqMeters - 400;\n    }\n  } else {\n    area_200_400 = sqMeters - 200;\n  }\n} else {\n  area_0_200 = sqMeters;\n}\n\nconst flow_0_200 = area_0_200 * 0;\nconst flow_200_400 = (area_200_400 * 100) / 10;\nconst flow_400_600 = (area_400_600 * 75) / 10;\nconst flow_600_plus = (area_600_plus * 50) / 10;\nlivingAreaFlow = flow_0_200 + flow_200_400 + flow_400_600 + flow_600_plus;\n\n// ========================================\n// 4. CALCULATE FIXTURE FLOW\n// ========================================\n// SPECIAL POWDER ROOM LOGIC: Auto-add 1 toilet (4 units) + 1 sink (1.5 units) = 5.5 total\nconst fixtureUnits = {\n  bathrooms: bathrooms * 6,\n  powderRooms: powderRooms * 5.5,      // Auto-includes: 1 toilet (4) + 1 sink (1.5)\n  showers: showers * 1.5,               // ADDED BACK: 1.5 units per shower\n  bidets: bidets * 1,\n  kitchenSinks: kitchenSinks * 1.5,\n  dishwashers: dishwashers * 0,\n  washingMachines: washingMachines * 1.5,\n  laundryTubs: laundryTubs * 1.5,\n  otherSinks: otherSinks * 1.5,\n  basementFloorDrains: basementFloorDrains * 2\n};\n\nconst totalFixtureUnits = \n  fixtureUnits.bathrooms + \n  fixtureUnits.powderRooms +\n  fixtureUnits.showers +        // ADDED BACK\n  fixtureUnits.bidets +\n  fixtureUnits.kitchenSinks +\n  fixtureUnits.dishwashers + \n  fixtureUnits.washingMachines + \n  fixtureUnits.laundryTubs +\n  fixtureUnits.otherSinks +\n  fixtureUnits.basementFloorDrains;\n\nconst fixturesOver20Flow = totalFixtureUnits > 20 ? (totalFixtureUnits - 20) * 50 : 0;\n\n// ========================================\n// 5. CALCULATE DESIGN DAILY SEWAGE FLOW\n// ========================================\nconst maxAdditionalFlow = Math.max(additionalBedroomFlow, fixturesOver20Flow, livingAreaFlow);\nconst designDailySewageFlow = bedroomBaseFlow + maxAdditionalFlow;\n\n// ========================================\n// 6. CALCULATE SEPTIC TANK SIZE - ALWAYS ROUND UP\n// ========================================\nconst septicTankSizeRaw = designDailySewageFlow * 2;\nconst septicTankSize = Math.ceil(septicTankSizeRaw);\n\nconst tTime = 16;\nconst infiltratorChambers = (designDailySewageFlow * tTime) / 300;\n\n// ========================================\n// 7. PREPARE OUTPUT DATA\n// ========================================\nreturn {\n  customerInfo: {\n    date: date,\n    name: customerName,\n    email: email,\n    phone: phone,\n    address: address\n  },\n  inputs: {\n    bedrooms: bedrooms,\n    sqFeet: sqFeet,\n    basementSqFeet: basementSqFeet,\n    hasWalkoutBasement: hasWalkoutBasement,\n    totalSqFeet: totalSqFeet,\n    sqMeters: Math.round(sqMeters * 100) / 100,\n    fixtures: {\n      bathrooms: bathrooms,\n      powderRooms: powderRooms,\n      showers: showers,         // ADDED BACK\n      bidets: bidets,\n      kitchenSinks: kitchenSinks,\n      dishwashers: dishwashers,\n      washingMachines: washingMachines,\n      laundryTubs: laundryTubs,\n      otherSinks: otherSinks,\n      basementFloorDrains: basementFloorDrains\n    }\n  },\n  calculations: {\n    bedroomFlow: {\n      baseFlow: bedroomBaseFlow,\n      additionalFlow: additionalBedroomFlow,\n      totalFlow: totalBedroomFlow\n    },\n    livingAreaFlow: {\n      area_0_200_sqm: Math.round(area_0_200 * 100) / 100,\n      area_200_400_sqm: Math.round(area_200_400 * 100) / 100,\n      area_400_600_sqm: Math.round(area_400_600 * 100) / 100,\n      area_600_plus_sqm: Math.round(area_600_plus * 100) / 100,\n      flow_0_200: Math.round(flow_0_200 * 100) / 100,\n      flow_200_400: Math.round(flow_200_400 * 100) / 100,\n      flow_400_600: Math.round(flow_400_600 * 100) / 100,\n      flow_600_plus: Math.round(flow_600_plus * 100) / 100,\n      totalLivingAreaFlow: Math.round(livingAreaFlow * 100) / 100\n    },\n    fixtureFlow: {\n      totalUnits: Math.round(totalFixtureUnits * 100) / 100,\n      fixturesOver20Flow: fixturesOver20Flow,\n      breakdown: fixtureUnits\n    },\n    designDailySewageFlow: Math.round(designDailySewageFlow * 100) / 100,\n    septicTankSize: septicTankSize,\n    septicTankSizeRaw: Math.round(septicTankSizeRaw * 100) / 100,\n    infiltratorChambers: Math.round(infiltratorChambers * 100) / 100\n  },\n  summary: {\n    designDailySewageFlowLiters: Math.round(designDailySewageFlow * 100) / 100,\n    septicTankSizeLiters: septicTankSize,\n    infiltratorChambersMeters: Math.round(infiltratorChambers * 100) / 100\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -576,
+        1120
+      ],
+      "id": "92fbb657-d125-43f3-827d-09a5075356fe",
+      "name": "Calculate Septic System Size"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prepare contract data for PDF generation\nconst data = $input.item.json;\n\n// Format date\nconst contractDate = new Date(data.customerInfo.date).toLocaleDateString('en-US', {\n  year: 'numeric',\n  month: 'long',\n  day: 'numeric'\n});\n\n// Generate contract number\nconst contractNumber = 'SBS-' + Date.now().toString().slice(-8);\n\nreturn {\n  contractNumber: contractNumber,\n  contractDate: contractDate,\n  companyName: 'Silver Bullet Septic Services Inc.',\n  companyAddress: '1263 Highway 5W Dundas ON L8H 5E1',\n  companyBCIN: 'Rodney Slagter BCIN 34588',\n  \n  customerName: data.customerInfo.name,\n  customerEmail: data.customerInfo.email,\n  customerPhone: data.customerInfo.phone,\n  propertyAddress: data.customerInfo.address,\n  \n  bedrooms: data.inputs.bedrooms,\n  sqFeet: data.inputs.sqFeet,\n  basementSqFeet: data.inputs.basementSqFeet,\n  hasWalkoutBasement: data.inputs.hasWalkoutBasement,\n  totalSqFeet: data.inputs.totalSqFeet,\n  sqMeters: data.inputs.sqMeters,\n  \n  bathrooms: data.inputs.fixtures.bathrooms,\n  powderRooms: data.inputs.fixtures.powderRooms,\n  showers: data.inputs.fixtures.showers,         // ADDED BACK\n  bidets: data.inputs.fixtures.bidets,\n  kitchenSinks: data.inputs.fixtures.kitchenSinks,\n  dishwashers: data.inputs.fixtures.dishwashers,\n  washingMachines: data.inputs.fixtures.washingMachines,\n  laundryTubs: data.inputs.fixtures.laundryTubs,\n  otherSinks: data.inputs.fixtures.otherSinks,\n  basementFloorDrains: data.inputs.fixtures.basementFloorDrains,\n  totalFixtureUnits: data.calculations.fixtureFlow.totalUnits,\n  \n  bedroomBaseFlow: data.calculations.bedroomFlow.baseFlow,\n  bedroomAdditionalFlow: data.calculations.bedroomFlow.additionalFlow,\n  livingAreaFlow: data.calculations.livingAreaFlow.totalLivingAreaFlow,\n  fixtureOverflow: data.calculations.fixtureFlow.fixturesOver20Flow,\n  \n  designDailySewageFlow: data.summary.designDailySewageFlowLiters,\n  septicTankSize: data.summary.septicTankSizeLiters,\n  septicTankSizeRaw: data.calculations.septicTankSizeRaw,\n  infiltratorChambers: data.summary.infiltratorChambersMeters,\n  \n  fullData: data\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -352,
+        1120
+      ],
+      "id": "939722c6-73bb-4b8c-92f3-2e0e002fbb35",
+      "name": "Prepare Contract Data"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Prepare Contract Data').item.json.customerEmail }}",
+        "subject": "Your Septic System Quote - Silver Bullet Septic Services",
+        "message": "=<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f4f4f4; padding: 20px;\">\n  <div style=\"background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);\">\n    \n    <div style=\"background-color: #3498db; color: white; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px;\">\n      <h1 style=\"margin: 0; font-size: 24px;\">Silver Bullet Septic Services</h1>\n      <p style=\"margin: 5px 0 0 0; font-size: 14px;\">Your Septic System Quote</p>\n    </div>\n\n    <p style=\"color: #333; line-height: 1.6;\">Hello {{ $('Prepare Contract Data').item.json.customerName }},</p>\n\n    <p style=\"color: #333; line-height: 1.6;\">Thank you for your septic system inquiry. We've received your information and calculated the requirements for your property.</p>\n\n    <p style=\"color: #333; line-height: 1.6;\"><strong>To make sure we have the correct specs, please verify your information below:</strong></p>\n\n    <div style=\"background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3498db;\">\n      <table style=\"width: 100%; border-collapse: collapse;\">\n        <tr>\n          <td style=\"padding: 8px 0; color: #2c3e50; font-weight: bold; width: 150px;\">Name:</td>\n          <td style=\"padding: 8px 0; color: #555;\">{{ $('Prepare Contract Data').item.json.customerName }}</td>\n        </tr>\n        <tr>\n          <td style=\"padding: 8px 0; color: #2c3e50; font-weight: bold;\">Address:</td>\n          <td style=\"padding: 8px 0; color: #555;\">{{ $('Prepare Contract Data').item.json.propertyAddress }}</td>\n        </tr>\n        <tr>\n          <td style=\"padding: 8px 0; color: #2c3e50; font-weight: bold;\">Email:</td>\n          <td style=\"padding: 8px 0; color: #555;\">{{ $('Prepare Contract Data').item.json.customerEmail }}</td>\n        </tr>\n        <tr>\n          <td style=\"padding: 8px 0; color: #2c3e50; font-weight: bold;\">Phone:</td>\n          <td style=\"padding: 8px 0; color: #555;\">{{ $('Prepare Contract Data').item.json.customerPhone }}</td>\n        </tr>\n        <tr>\n          <td style=\"padding: 8px 0; color: #2c3e50; font-weight: bold;\">Living Area:</td>\n          <td style=\"padding: 8px 0; color: #555;\">{{ $('Prepare Contract Data').item.json.sqFeet }} sq ft</td>\n        </tr>\n        <tr>\n          <td style=\"padding: 8px 0; color: #2c3e50; font-weight: bold;\">Bedrooms:</td>\n          <td style=\"padding: 8px 0; color: #555;\">{{ $('Prepare Contract Data').item.json.bedrooms }}</td>\n        </tr>\n      </table>\n    </div>\n\n    <div style=\"background-color: #3498db; color: white; padding: 20px; border-radius: 8px; text-align: center; margin: 25px 0;\">\n      <h2 style=\"margin: 0 0 10px 0; font-size: 20px;\">Your Septic Tank Size</h2>\n      <p style=\"font-size: 32px; font-weight: bold; margin: 0;\">{{ $('Prepare Contract Data').item.json.septicTankSize }} liters</p>\n    </div>\n\n    <p style=\"color: #333; line-height: 1.6;\">We will contact you in the next <strong>24-48 hours</strong> to discuss the scope of work and gather any further information we may need. We will also provide a quote and timeline for this project.</p>\n\n    <hr style=\"border: none; border-top: 1px solid #e0e0e0; margin: 25px 0;\">\n\n    <p style=\"color: #333; line-height: 1.6;\">Thank you again for reaching out to us,</p>\n\n    <div style=\"margin-top: 20px;\">\n      <p style=\"margin: 5px 0; color: #2c3e50; font-weight: bold;\">Rod Slagter</p>\n      <p style=\"margin: 5px 0; color: #555;\">Silver Bullet Septic Services Inc.</p>\n      <p style=\"margin: 5px 0; color: #555;\">1263 Highway 5W Dundas ON L8H 5E1</p>\n      <p style=\"margin: 5px 0; color: #3498db; font-weight: bold;\">(905)308-5583</p>\n    </div>\n\n  </div>\n</div>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        528,
+        1408
+      ],
+      "id": "afc87061-5042-4d56-9a10-fcb606328057",
+      "name": "Customer Response Email",
+      "webhookId": "001b9794-58e2-48f0-bdb7-0e166bfcef58",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "vJswFSiBbFNHHGVy",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "silverbulletseptic@gmail.com",
+        "subject": "=🚨 New Quote: {{ $('Prepare Contract Data').item.json.customerName }} - {{ $('Prepare Contract Data').item.json.septicTankSize }}L",
+        "message": "=<!DOCTYPE html>\n<html>\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <style>\n        body {\n            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;\n            margin: 0;\n            padding: 0;\n            background-color: #f5f5f5;\n        }\n        .email-container {\n            max-width: 600px;\n            margin: 0 auto;\n            background-color: #ffffff;\n        }\n        .header {\n            background: linear-gradient(135deg, #1a365d 0%, #2d5a8c 100%);\n            padding: 20px;\n            text-align: center;\n            color: white;\n        }\n        .header h1 {\n            margin: 0;\n            font-size: 20px;\n        }\n        .content {\n            padding: 20px;\n        }\n        .section {\n            margin-bottom: 25px;\n            border-left: 4px solid #2d5a8c;\n            padding-left: 15px;\n        }\n        .section-title {\n            font-size: 18px;\n            font-weight: bold;\n            color: #1a365d;\n            margin: 0 0 15px 0;\n        }\n        .info-row {\n            display: flex;\n            padding: 8px 0;\n            border-bottom: 1px solid #e0e0e0;\n            flex-wrap: wrap;\n        }\n        .info-row:last-child {\n            border-bottom: none;\n        }\n        .info-label {\n            font-weight: bold;\n            color: #4a5568;\n            min-width: 150px;\n            margin-bottom: 5px;\n        }\n        .info-value {\n            color: #2d3748;\n            flex: 1;\n        }\n        .highlight-box {\n            background-color: #f0f7ff;\n            border: 2px solid #2d5a8c;\n            border-radius: 8px;\n            padding: 15px;\n            margin: 20px 0;\n            text-align: center;\n        }\n        .highlight-box .label {\n            font-size: 14px;\n            color: #4a5568;\n            margin-bottom: 5px;\n        }\n        .highlight-box .value {\n            font-size: 28px;\n            font-weight: bold;\n            color: #1a365d;\n        }\n        table {\n            width: 100%;\n            border-collapse: collapse;\n            margin-top: 10px;\n            font-size: 14px;\n        }\n        table thead {\n            background-color: #2d5a8c;\n            color: white;\n        }\n        table th, table td {\n            padding: 10px;\n            text-align: left;\n            border: 1px solid #e0e0e0;\n        }\n        table tbody tr:nth-child(even) {\n            background-color: #f7fafc;\n        }\n        .footer {\n            background-color: #f7fafc;\n            padding: 15px;\n            text-align: center;\n            font-size: 12px;\n            color: #718096;\n            border-top: 1px solid #e0e0e0;\n        }\n        \n        @media only screen and (max-width: 600px) {\n            .email-container {\n                width: 100% !important;\n            }\n            .content {\n                padding: 15px !important;\n            }\n            .info-row {\n                flex-direction: column;\n            }\n            .info-label {\n                min-width: auto;\n                margin-bottom: 3px;\n            }\n            table {\n                font-size: 12px;\n            }\n            table th, table td {\n                padding: 6px;\n            }\n            .highlight-box .value {\n                font-size: 24px;\n            }\n        }\n    </style>\n</head>\n<body>\n    <div class=\"email-container\">\n        <div class=\"header\">\n            <h1>🏠 New Septic System Quote Request</h1>\n        </div>\n        \n        <div class=\"content\">\n            <!-- Customer Information -->\n            <div class=\"section\">\n                <div class=\"section-title\">📋 Customer Information</div>\n                <div class=\"info-row\">\n                    <div class=\"info-label\">Date:</div>\n                    <div class=\"info-value\">{{ $('Prepare Contract Data').item.json.contractDate }}</div>\n                </div>\n                <div class=\"info-row\">\n                    <div class=\"info-label\">Name:</div>\n                    <div class=\"info-value\">{{ $('Prepare Contract Data').item.json.customerName }}</div>\n                </div>\n                <div class=\"info-row\">\n                    <div class=\"info-label\">Address:</div>\n                    <div class=\"info-value\">{{ $('Prepare Contract Data').item.json.propertyAddress }}</div>\n                </div>\n                <div class=\"info-row\">\n                    <div class=\"info-label\">Email:</div>\n                    <div class=\"info-value\"><a href=\"mailto:{{ $('Prepare Contract Data').item.json.customerEmail }}\">{{ $('Prepare Contract Data').item.json.customerEmail }}</a></div>\n                </div>\n                <div class=\"info-row\">\n                    <div class=\"info-label\">Phone:</div>\n                    <div class=\"info-value\">{{ $('Prepare Contract Data').item.json.customerPhone }}</div>\n                </div>\n            </div>\n\n            <!-- Recommended Tank Size -->\n            <div class=\"highlight-box\">\n                <div class=\"label\">Recommended Septic Tank Size</div>\n                <div class=\"value\">{{ $('Prepare Contract Data').item.json.septicTankSize }} liters</div>\n            </div>\n\n            <!-- Property Details -->\n            <div class=\"section\">\n                <div class=\"section-title\">🏡 Property Details</div>\n                <div class=\"info-row\">\n                    <div class=\"info-label\">Bedrooms (incl. basement):</div>\n                    <div class=\"info-value\">{{ $('Prepare Contract Data').item.json.bedrooms }}</div>\n                </div>\n                <div class=\"info-row\">\n                    <div class=\"info-label\">Heated Living Space:</div>\n                    <div class=\"info-value\">{{ $('Prepare Contract Data').item.json.sqFeet }} sq ft</div>\n                </div>\n                <div class=\"info-row\">\n                    <div class=\"info-label\">Walkout Basement 50%+:</div>\n                    <div class=\"info-value\">{{ $('Prepare Contract Data').item.json.hasWalkoutBasement }}</div>\n                </div>\n                <div class=\"info-row\">\n                    <div class=\"info-label\">Basement Sq Ft:</div>\n                    <div class=\"info-value\">{{ $('Prepare Contract Data').item.json.basementSqFeet }} sq ft</div>\n                </div>\n                <div class=\"info-row\">\n                    <div class=\"info-label\">Total Area Used:</div>\n                    <div class=\"info-value\">{{ $('Prepare Contract Data').item.json.totalSqFeet }} sq ft ({{ $('Prepare Contract Data').item.json.sqMeters }} m²)</div>\n                </div>\n            </div>\n\n            <!-- Fixture Count -->\n            <div class=\"section\">\n                <div class=\"section-title\">🚿 Fixture Count Details</div>\n                <table>\n                    <thead>\n                        <tr>\n                            <th>Item</th>\n                            <th>Count</th>\n                            <th>Units</th>\n                            <th>Subtotal</th>\n                        </tr>\n                    </thead>\n                    <tbody>\n                        <tr>\n                            <td>3 or 4+ pc Bathrooms</td>\n                            <td>{{ $('Prepare Contract Data').item.json.bathrooms }}</td>\n                            <td>6</td>\n                            <td>{{ $('Prepare Contract Data').item.json.bathrooms * 6 }}</td>\n                        </tr>\n                        <tr>\n                            <td>2-piece Powder Rooms<br><small>(Auto-adds: 1 toilet @ 4 units + 1 sink @ 1.5 units)</small></td>\n                            <td>{{ $('Prepare Contract Data').item.json.powderRooms }}</td>\n                            <td>5.5</td>\n                            <td>{{ $('Prepare Contract Data').item.json.powderRooms * 5.5 }}</td>\n                        </tr>\n                        <tr>\n                            <td>Extra Shower/bathtub (1 head)</td>\n                            <td>{{ $('Prepare Contract Data').item.json.showers }}</td>\n                            <td>1.5</td>\n                            <td>{{ $('Prepare Contract Data').item.json.showers * 1.5 }}</td>\n                        </tr>\n                        <tr>\n                            <td>Bidets</td>\n                            <td>{{ $('Prepare Contract Data').item.json.bidets }}</td>\n                            <td>1</td>\n                            <td>{{ $('Prepare Contract Data').item.json.bidets * 1 }}</td>\n                        </tr>\n                        <tr>\n                            <td>Kitchen Sinks<br><small>(Double sink = 1, Island sink = extra)</small></td>\n                            <td>{{ $('Prepare Contract Data').item.json.kitchenSinks }}</td>\n                            <td>1.5</td>\n                            <td>{{ $('Prepare Contract Data').item.json.kitchenSinks * 1.5 }}</td>\n                        </tr>\n                        <tr>\n                            <td>Dishwashers</td>\n                            <td>{{ $('Prepare Contract Data').item.json.dishwashers }}</td>\n                            <td>0</td>\n                            <td>0</td>\n                        </tr>\n                        <tr>\n                            <td>Clothes Washing Machines</td>\n                            <td>{{ $('Prepare Contract Data').item.json.washingMachines }}</td>\n                            <td>1.5</td>\n                            <td>{{ $('Prepare Contract Data').item.json.washingMachines * 1.5 }}</td>\n                        </tr>\n                        <tr>\n                            <td>Laundry Tubs</td>\n                            <td>{{ $('Prepare Contract Data').item.json.laundryTubs }}</td>\n                            <td>1.5</td>\n                            <td>{{ $('Prepare Contract Data').item.json.laundryTubs * 1.5 }}</td>\n                        </tr>\n                        <tr>\n                            <td>Other Sinks<br><small>(Mudroom, garage, pet washing, etc.)</small></td>\n                            <td>{{ $('Prepare Contract Data').item.json.otherSinks }}</td>\n                            <td>1.5</td>\n                            <td>{{ $('Prepare Contract Data').item.json.otherSinks * 1.5 }}</td>\n                        </tr>\n                        <tr>\n                            <td>Basement Floor Drains<br><small>(If home is 20+ years old)</small></td>\n                            <td>{{ $('Prepare Contract Data').item.json.basementFloorDrains }}</td>\n                            <td>2</td>\n                            <td>{{ $('Prepare Contract Data').item.json.basementFloorDrains * 2 }}</td>\n                        </tr>\n                        <tr style=\"background-color: #e6f2ff; font-weight: bold;\">\n                            <td colspan=\"3\">Total Fixture Units</td>\n                            <td>{{ $('Prepare Contract Data').item.json.totalFixtureUnits }}</td>\n                        </tr>\n                    </tbody>\n                </table>\n            </div>\n\n            <!-- Calculation Details -->\n            <div class=\"section\">\n                <div class=\"section-title\">📊 Calculation Breakdown</div>\n                <div class=\"info-row\">\n                    <div class=\"info-label\">Bedroom Base Flow:</div>\n                    <div class=\"info-value\">{{ $('Prepare Contract Data').item.json.bedroomBaseFlow }} L/day</div>\n                </div>\n                <div class=\"info-row\">\n                    <div class=\"info-label\">Additional Bedroom Flow:</div>\n                    <div class=\"info-value\">{{ $('Prepare Contract Data').item.json.bedroomAdditionalFlow }} L/day</div>\n                </div>\n                <div class=\"info-row\">\n                    <div class=\"info-label\">Living Area Flow:</div>\n                    <div class=\"info-value\">{{ $('Prepare Contract Data').item.json.livingAreaFlow }} L/day</div>\n                </div>\n                <div class=\"info-row\">\n                    <div class=\"info-label\">Fixtures Over 20 Flow:</div>\n                    <div class=\"info-value\">{{ $('Prepare Contract Data').item.json.fixtureOverflow }} L/day</div>\n                </div>\n            </div>\n\n            <!-- System Specifications -->\n            <div class=\"section\">\n                <div class=\"section-title\">⚙️ System Specifications</div>\n                <div class=\"info-row\">\n                    <div class=\"info-label\">Design Daily Flow:</div>\n                    <div class=\"info-value\">{{ $('Prepare Contract Data').item.json.designDailySewageFlow }} L/day</div>\n                </div>\n                <div class=\"info-row\">\n                    <div class=\"info-label\">Septic Tank Size:</div>\n                    <div class=\"info-value\"><strong>{{ $('Prepare Contract Data').item.json.septicTankSize }} liters</strong> (rounded up)</div>\n                </div>\n                <div class=\"info-row\">\n                    <div class=\"info-label\">Infiltrator Chambers:</div>\n                    <div class=\"info-value\">{{ $('Prepare Contract Data').item.json.infiltratorChambers }} meters</div>\n                </div>\n                <div class=\"info-row\">\n                    <div class=\"info-label\">Contract Number:</div>\n                    <div class=\"info-value\">{{ $('Prepare Contract Data').item.json.contractNumber }}</div>\n                </div>\n            </div>\n        </div>\n\n        <div class=\"footer\">\n            <p><em>This email was sent automatically with n8n</em></p>\n            <p><strong>Silver Bullet Septic Services Inc.</strong><br>\n            621 Concession 6 W. Millgrove ON L8B 1N3<br>\n            Rod Slagter, BCIN 34588 | Cell: 905-308-5583<br>\n            www.silverbulletseptic.com</p>\n        </div>\n    </div>\n</body>\n</html>\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        528,
+        832
+      ],
+      "id": "cc380b70-5fb6-4ad7-a2dd-6f682a3548a0",
+      "name": "Septic System Request Info",
+      "webhookId": "001b9794-58e2-48f0-bdb7-0e166bfcef58",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "vJswFSiBbFNHHGVy",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Copy Template').first().json.id }}"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "application/pdf"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        304,
+        1120
+      ],
+      "id": "86fa7907-8b87-468d-8585-e81b4ffc2466",
+      "name": "Download to PDF",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Ygakna2ZauWyn2Cj",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "silverbulletseptic@gmail.com",
+        "subject": "=Authorization Letter for Permit - {{ $('Prepare Contract Data').item.json.customerName }} - {{ $('Prepare Contract Data').item.json.contractDate }}",
+        "emailType": "text",
+        "message": "=Attached is the authorization permit for {{ $('Prepare Contract Data').item.json.customerName }}.\n\nProperty: {{ $('Prepare Contract Data').item.json.propertyAddress }}\nTank Size: {{ $('Prepare Contract Data').item.json.septicTankSize }} liters\n\nThis PDF is ready to forward to the customer when you approve the quote and are ready to proceed with the permit application.\n\n---\nCustomer Contact:\nEmail: {{ $('Prepare Contract Data').item.json.customerEmail }}\nPhone: {{ $('Prepare Contract Data').item.json.customerPhone }}",
+        "options": {
+          "appendAttribution": false,
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        528,
+        1024
+      ],
+      "id": "17d0ef8f-0743-4da7-ae33-2d096112f933",
+      "name": "Permit Authorization PDF",
+      "webhookId": "001b9794-58e2-48f0-bdb7-0e166bfcef58",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "vJswFSiBbFNHHGVy",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Prepare Contract Data').item.json.contractDate }}-{{ $('Prepare Contract Data').item.json.customerName }}-Authorization Letter for Permit.PDF",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1vgZaO8F41nhTi5D_Q5gV-f1Y_FT5xj-e",
+          "mode": "list",
+          "cachedResultName": "Silver Septic",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1vgZaO8F41nhTi5D_Q5gV-f1Y_FT5xj-e"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        528,
+        1216
+      ],
+      "id": "a96b71e5-0297-4ade-9ac1-572e2d47f6e7",
+      "name": "Save Permit Authorization to Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "Ygakna2ZauWyn2Cj",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $json.id }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "replaceAll",
+              "text": "{{contractDate}}",
+              "replaceText": "={{ $('Prepare Contract Data').item.json.contractDate }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{customerName}}",
+              "replaceText": "={{ $('Prepare Contract Data').item.json.customerName }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{propertyAddress}}",
+              "replaceText": "={{ $('Prepare Contract Data').item.json.propertyAddress }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{customerEmail}}",
+              "replaceText": "={{ $('Prepare Contract Data').item.json.customerEmail }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{customerPhone}}",
+              "replaceText": "={{ $('Prepare Contract Data').item.json.customerPhone + '' }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        80,
+        1120
+      ],
+      "id": "e0ead77b-6153-42d9-bd4e-812b25475be0",
+      "name": "Replace Tags in Google Doc",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "9lyPqKQJ6S2tDsie",
+          "name": "Google Docs account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "copy",
+        "fileId": {
+          "__rl": true,
+          "value": "=1oLtyPKLruQ2BlGBS9wlzGM-4F9w-jQmo0MJeeQQW9JI",
+          "mode": "id"
+        },
+        "name": "={{ $('Prepare Contract Data').first().json.contractDate + '-' + $('Prepare Contract Data').first().json.customerName + '-Authorization Permit' }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -144,
+        1120
+      ],
+      "id": "a2db6515-7556-4fff-863d-918eea18ab1e",
+      "name": "Copy Template",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cNhSlsbOSVJx9yuU",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "deleteFile",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Download to PDF').item.json.documentId }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        752,
+        1216
+      ],
+      "id": "7615df86-a47f-4d74-a192-d517fa8567a0",
+      "name": "Delete Temp Copy",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cNhSlsbOSVJx9yuU",
+          "name": "Google Drive account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Form Trigger": {
+      "main": [
+        [
+          {
+            "node": "Calculate Septic System Size",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Septic System Size": {
+      "main": [
+        [
+          {
+            "node": "Prepare Contract Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Contract Data": {
+      "main": [
+        [
+          {
+            "node": "Copy Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download to PDF": {
+      "main": [
+        [
+          {
+            "node": "Permit Authorization PDF",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Septic System Request Info",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Customer Response Email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Save Permit Authorization to Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Permit Authorization to Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Delete Temp Copy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Tags in Google Doc": {
+      "main": [
+        [
+          {
+            "node": "Download to PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Copy Template": {
+      "main": [
+        [
+          {
+            "node": "Replace Tags in Google Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "c320d562-c1aa-402f-b77f-f772b2d4f56d",
+  "activeVersionId": null,
+  "versionCounter": 4,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-25T21:10:36.610Z",
+      "createdAt": "2026-01-25T21:10:36.610Z",
+      "role": "workflow:owner",
+      "workflowId": "9Aj34mrQvohxERIbsxhhM",
+      "projectId": "HZqYjnNmPLW2kkrP",
+      "project": {
+        "updatedAt": "2025-12-12T12:37:29.393Z",
+        "createdAt": "2025-12-12T12:34:20.173Z",
+        "id": "HZqYjnNmPLW2kkrP",
+        "name": "Miguel Simon <miguel.simon@digitalpneuma.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-12-12T12:34:20.173Z",
+            "createdAt": "2025-12-12T12:34:20.173Z",
+            "userId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+            "projectId": "HZqYjnNmPLW2kkrP",
+            "user": {
+              "updatedAt": "2026-01-31T12:34:46.000Z",
+              "createdAt": "2025-12-12T12:34:19.617Z",
+              "id": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+              "email": "miguel.simon@digitalpneuma.com",
+              "firstName": "Miguel",
+              "lastName": "Simon",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-12-12T12:39:28.094Z",
+                "personalization_survey_n8n_version": "1.123.5",
+                "automationGoalDevops": [
+                  "other",
+                  "monitoring-alerting",
+                  "reporting"
+                ],
+                "automationGoalDevopsOther": "Build workflows to automate manual processes",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "GjxXDVv1iBEVBdE4",
+                "userActivatedAt": 1765753766341,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1767113477505
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-01-30",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}
