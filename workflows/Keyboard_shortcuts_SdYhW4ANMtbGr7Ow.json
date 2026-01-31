@@ -1,0 +1,921 @@
+{
+  "updatedAt": "2025-09-09T14:31:37.000Z",
+  "createdAt": "2025-09-09T14:20:48.830Z",
+  "id": "SdYhW4ANMtbGr7Ow",
+  "name": "Keyboard shortcuts",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "id": "3a50843b-c75e-46b5-bd8b-4f2d0d1dce6c",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        480,
+        1456
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "content": "# Tutorial - n8n Keyboard Shortcuts!\n\nWelcome! This workflow is an interactive playground to help you master the most useful keyboard shortcuts in n8n.\n\n**How to use this tutorial:**\nFollow the main path from top to bottom. Each step will give you a small task to complete using a keyboard shortcut. Just do what the sticky notes say!\n\nLet's begin!",
+        "height": 260,
+        "width": 620,
+        "color": 6
+      },
+      "id": "141e6c94-bc1c-43cb-9ad3-bb8c85ee1547",
+      "name": "Introduction",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -368,
+        -160
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Chapter 1: Node Basics\n\nLet's start with the fundamentals of interacting with a single node.",
+        "height": 500,
+        "width": 2020
+      },
+      "id": "ea5a9f03-3722-4a43-8dd8-804a708995a0",
+      "name": "Chapter 1 Header",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -368,
+        144
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "12345",
+              "name": "my_value",
+              "type": "string",
+              "value": "Miguel Simon"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "48d3e098-bc76-4072-9aaf-9b556f741f4f",
+      "name": "➡️ Now, Edit Me!",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        16,
+        448
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {},
+      "id": "a7a4bebc-dd11-4b88-ae03-952c63cc8990",
+      "name": "➡️ This one is extra. Deactivate Me!",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        304,
+        448
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "238ff18e-0d05-4151-85db-4a85f298577e",
+      "name": "➡️ We need another one. Duplicate Me!",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        576,
+        448
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Chapter 2: Canvas Navigation & Selection\n\nNow let's learn how to move around the canvas and manage multiple nodes like a pro.",
+        "height": 500,
+        "width": 1780,
+        "color": 2
+      },
+      "id": "20105b01-49c7-46ed-aad1-f264ec2217e5",
+      "name": "Chapter 2 Header",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -368,
+        688
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "850f20da-4536-4854-b4af-69736b785954",
+      "name": "➡️ Let's add a new node",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        -256,
+        992
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "e7042f02-f598-42cd-a487-069bf438b61a",
+      "name": "➡️ Select these three nodes",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        16,
+        992
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "c9b26013-2688-42e9-80d5-d021f98ec1a4",
+      "name": "➡️ Now select everything",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        -256,
+        1552
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "6cc4f3dd-412a-4977-b28f-52ed117e1922",
+      "name": "➡️ Zoom out to see it all",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        0,
+        1552
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Chapter 3: Advanced Actions\n\nTime for some powerful moves:\n- Repositioning (Tidy Up)\n- Creating sub-workflows.\n- Canvas Zoom Control",
+        "height": 500,
+        "width": 1420,
+        "color": 4
+      },
+      "id": "a191f1d5-d63c-472c-9701-b40162953f61",
+      "name": "Chapter 3 Header",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -368,
+        1232
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "b9d90b73-7b09-4b23-88be-41f8687ba96c",
+      "name": "➡️ Copy Me",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        880,
+        448
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Chapter 4: Execution & Debugging\n\nThese shortcuts are essential when you're testing your workflows.",
+        "height": 520,
+        "width": 960,
+        "color": 5
+      },
+      "id": "5479c60a-b00f-49d6-af81-9e60425bc4f0",
+      "name": "Chapter 4 Header",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -368,
+        1760
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "12345",
+              "name": "status",
+              "type": "string",
+              "value": "Data is ready!"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "703eabf2-d93b-4d3e-a15e-54f21f91a3e1",
+      "name": "➡️ Pin My Data",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        16,
+        2112
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "content": "## 🎉 You've Mastered the Basics!\n\nThe most important shortcut of all?\n\n## `Ctrl + S`\n### to Save your workflow!**\n\nDo it often. Congratulations!",
+        "height": 240,
+        "width": 540,
+        "color": 6
+      },
+      "id": "a0692f1c-fb3e-42ca-90b1-6fade7ea8c75",
+      "name": "Conclusion",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -368,
+        2304
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "**Task:** Select this node.\n\nPress **`Space`** to rename it.\n\nCall it \"My First Node\" and press Enter.",
+        "height": 340,
+        "width": 260
+      },
+      "id": "f3c4d59b-a27b-4839-aa8b-9566e614d9a9",
+      "name": "Sticky Note13",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -336,
+        288
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "**Task:** Select this Set node.\n\nPress **`Enter`** to open its settings panel.\n\nChange the value from \"Hello World\" to your name!",
+        "height": 360,
+        "width": 260
+      },
+      "id": "ec8a4d90-b9f7-458f-ab3c-4b0fff921cc5",
+      "name": "Sticky Note14",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -64,
+        272
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "**Task:** Select this node.\n\nPress **`D`** to deactivate it.\n\nNotice how it turns grey and would be skipped during an execution.",
+        "height": 360,
+        "width": 260
+      },
+      "id": "68eaf3ac-e6e4-4b52-b3ea-3d968d4252a6",
+      "name": "Sticky Note15",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        224,
+        272
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "**Task:** Select this node.\n\nPress **`Ctrl + D`** to create an exact copy of it.",
+        "height": 300,
+        "width": 260
+      },
+      "id": "2a2c9650-339f-4a56-86b4-43adde6f6a09",
+      "name": "Sticky Note16",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        496,
+        320
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "**Task:** Press **`Tab`** anywhere on the canvas.\n\nThis opens the node search menu. Type \"Set\" and press Enter to add a new Set Node.",
+        "height": 340,
+        "width": 260,
+        "color": 2
+      },
+      "id": "778d8367-9278-4b51-8339-da0059389b9e",
+      "name": "Sticky Note17",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -336,
+        832
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "**Task:** Select multiple nodes.\n\n**Method 1:** Hold **`Ctrl`** and click on Node A, B, and C.\n\n**Method 2:** Click and drag a selection box around all three nodes.\n\n**Method 3:** Click on the first or last node, then hold **`Shift`** and press the Left or Right arrow key.",
+        "height": 360,
+        "width": 700,
+        "color": 2
+      },
+      "id": "19dfc969-1e87-4a63-b7e3-67903f461e20",
+      "name": "Sticky Note18",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -64,
+        800
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "**Task:** Press **`Ctrl + A`** to select every single node and sticky note on the canvas.",
+        "height": 280,
+        "width": 260,
+        "color": 4
+      },
+      "id": "74034e22-002b-4a03-b793-475d9dcba142",
+      "name": "Sticky Note19",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -336,
+        1424
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "**Task:** Press **`1`** to fit the entire workflow to your screen.\n\n**Bonus:** Hold **`Ctrl`** and use your mouse wheel to zoom in and out.",
+        "height": 300,
+        "color": 4
+      },
+      "id": "fc52901a-350c-4d3b-bb23-e83a9800d571",
+      "name": "Sticky Note20",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -64,
+        1408
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "**Task:**\n1. Select this node and press **`Ctrl + C`** (Copy) or **`Ctrl + X`** (Cut).\n2. Click anywhere on the empty canvas.\n3. Press **`Ctrl + V`** (Paste).",
+        "height": 320,
+        "width": 300
+      },
+      "id": "1770f3f4-8083-4fc7-99f9-8575b7d7fb88",
+      "name": "Sticky Note21",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        784,
+        304
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "**Task:**\n1. Click \"Execute Workflow\" on the left of the \"Execute Set Node\".\n2. After it runs, select **this** Set node.\n3. Press **`P`** to **Pin** its data.\n\n\nPinned data stays visible even after you run the workflow again, which is great for comparing results or avoiding run costs and delays!",
+        "height": 380,
+        "width": 340,
+        "color": 5
+      },
+      "id": "3db24abd-f130-4db4-98bb-8ef64e3c5c07",
+      "name": "Sticky Note22",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -96,
+        1888
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "f1c5fc11-844a-417c-ba18-e0d26f06cbcb",
+      "name": "Node 2",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        240,
+        992
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "323e4b4d-e24b-4386-af79-89a03431da73",
+      "name": "Node 3",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        464,
+        992
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "ed426e78-ea71-4cff-9f6f-5ad2bd2c3f7b",
+      "name": "Execute Set Node",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        -288,
+        2112
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "83dd2836-d735-47dc-a300-45b8e241c129",
+      "name": "➡️ Open the Execution Data Panel",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        352,
+        2112
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "**Task:**\n1. Press **`L`** to open the **Execution Panel** and use the Down Arrow to select a node with input/output execution data.\n2. Press **`O`** to show/hide the **Outputs**\n3. Press **`I`** to show/hide the **Inputs**",
+        "height": 320,
+        "width": 320,
+        "color": 5
+      },
+      "id": "f7b2aedf-f15b-4e5d-a6a2-7c7548f01c58",
+      "name": "Sticky Note24",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        256,
+        1952
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "**Task:** Select the nodes in this node.\n\nPress  **`Shift + Alt + T`**  to tidy up selected nodes.\n\nPress  **`Alt + X`**  to create a sub workflow with selected nodes.",
+        "height": 420,
+        "width": 840,
+        "color": 7
+      },
+      "id": "1170de82-559d-4259-b427-ab742d05cfc1",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        224,
+        1280
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "**Task:**\n1. Select this node.\n2. Press **`Del`** to delete the selected node.\n3. Press **`Ctrl + Z`** to undo.\n4. Press **`Ctrl + Shift + Z`** to re-do (it will re-delete me!).",
+        "height": 360,
+        "width": 280
+      },
+      "id": "bb85549d-e38a-43bc-9c48-c0f4ff83a755",
+      "name": "Sticky Note25",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1104,
+        272
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "a3072da8-b3d1-4246-844e-9cd6a4f24647",
+      "name": "➡️ Delete me!",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        1184,
+        448
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "d662e385-0793-4932-b871-31e2b56bd732",
+      "name": "➡️ Add a Sticky Node",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        1456,
+        448
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "**Task:** Add a sticky note.\n\nPress **`Shift + S`** to add a new Sticky Note.",
+        "height": 300
+      },
+      "id": "7a2f1c44-d25b-469c-bfc2-84a1fd5650b7",
+      "name": "Sticky Note26",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1392,
+        320
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "**Task:** Move between nodes\n\n**Method 1:** Select a node, then use the arrow keys to move to the next or previous node.\n\n**Method 2:** Open a node (select it + Enter), then navigate to the next or previous node directly from the edit panel.\n👉 Look for the target node on the left or right edge of your screen, centered vertically.",
+        "height": 360,
+        "width": 740,
+        "color": 2
+      },
+      "id": "c770a5eb-ad0d-4f23-aa7b-3f83273c1e05",
+      "name": "Sticky Note27",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        656,
+        800
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "9527a871-1a60-41bc-88a6-6808d7f5b8cc",
+      "name": "Node A",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        736,
+        992
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "e65e922b-5091-47d3-8d1a-f010bcf79f52",
+      "name": "Node B",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        976,
+        992
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "05d281ab-5e51-4978-ad85-08569be4810c",
+      "name": "Node C",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        1216,
+        992
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "1129f840-61e9-438a-85b4-f4d75c613a77",
+      "name": "My First Node",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        -256,
+        448
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "94647c4f-b1ca-4f28-82b4-71e15d377923",
+      "name": "Test Node (2)",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        1152,
+        1552
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "a9b2b069-dc10-4e21-bf3e-57c8d95b00d2",
+      "name": "Test Node (1)",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        1152,
+        1360
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "d9ed852c-1065-4c28-9e1b-b8a98f7a9311",
+      "name": "Test Node",
+      "type": "n8n-nodes-base.noOp",
+      "position": [
+        704,
+        1456
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "3e271a03-2dc7-42e8-a16d-ea604d3e25a1",
+              "operator": {
+                "name": "filter.operator.equals",
+                "type": "string",
+                "operation": "equals"
+              },
+              "leftValue": "",
+              "rightValue": ""
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c470ce8d-9121-42e3-bbb9-b2c8fc19a669",
+      "name": "Test IF",
+      "type": "n8n-nodes-base.if",
+      "position": [
+        928,
+        1456
+      ],
+      "typeVersion": 2.2
+    }
+  ],
+  "connections": {
+    "Node 2": {
+      "main": [
+        [
+          {
+            "node": "Node 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Node A": {
+      "main": [
+        [
+          {
+            "node": "Node B",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Node B": {
+      "main": [
+        [
+          {
+            "node": "Node C",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "➡️ Copy Me": {
+      "main": [
+        [
+          {
+            "node": "➡️ Delete me!",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Set Node": {
+      "main": [
+        [
+          {
+            "node": "➡️ Pin My Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Test Node",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "➡️ Delete me!": {
+      "main": [
+        [
+          {
+            "node": "➡️ Add a Sticky Node",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "➡️ Pin My Data": {
+      "main": [
+        [
+          {
+            "node": "➡️ Open the Execution Data Panel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "➡️ Now, Edit Me!": {
+      "main": [
+        [
+          {
+            "node": "➡️ This one is extra. Deactivate Me!",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "➡️ Now select everything": {
+      "main": [
+        [
+          {
+            "node": "➡️ Zoom out to see it all",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "➡️ Select these three nodes": {
+      "main": [
+        [
+          {
+            "node": "Node 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "➡️ This one is extra. Deactivate Me!": {
+      "main": [
+        [
+          {
+            "node": "➡️ We need another one. Duplicate Me!",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "➡️ We need another one. Duplicate Me!": {
+      "main": [
+        [
+          {
+            "node": "➡️ Copy Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "My First Node": {
+      "main": [
+        [
+          {
+            "node": "➡️ Now, Edit Me!",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test Node": {
+      "main": [
+        [
+          {
+            "node": "Test IF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test IF": {
+      "main": [
+        [
+          {
+            "node": "Test Node (1)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Test Node (2)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Execute Set Node": [
+      {
+        "json": {}
+      }
+    ]
+  },
+  "versionId": "0a6a1082-2ecb-481a-8f18-77e0c827530c",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-13T17:40:58.884Z",
+      "createdAt": "2025-12-13T17:40:58.884Z",
+      "role": "workflow:owner",
+      "workflowId": "SdYhW4ANMtbGr7Ow",
+      "projectId": "HZqYjnNmPLW2kkrP",
+      "project": {
+        "updatedAt": "2025-12-12T12:37:29.393Z",
+        "createdAt": "2025-12-12T12:34:20.173Z",
+        "id": "HZqYjnNmPLW2kkrP",
+        "name": "Miguel Simon <miguel.simon@digitalpneuma.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-12-12T12:34:20.173Z",
+            "createdAt": "2025-12-12T12:34:20.173Z",
+            "userId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+            "projectId": "HZqYjnNmPLW2kkrP",
+            "user": {
+              "updatedAt": "2026-01-31T12:34:46.000Z",
+              "createdAt": "2025-12-12T12:34:19.617Z",
+              "id": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+              "email": "miguel.simon@digitalpneuma.com",
+              "firstName": "Miguel",
+              "lastName": "Simon",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-12-12T12:39:28.094Z",
+                "personalization_survey_n8n_version": "1.123.5",
+                "automationGoalDevops": [
+                  "other",
+                  "monitoring-alerting",
+                  "reporting"
+                ],
+                "automationGoalDevopsOther": "Build workflows to automate manual processes",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "GjxXDVv1iBEVBdE4",
+                "userActivatedAt": 1765753766341,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1767113477505
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-01-30",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}
