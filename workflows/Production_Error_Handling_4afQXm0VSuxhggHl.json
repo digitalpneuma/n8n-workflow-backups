@@ -1,0 +1,2309 @@
+{
+  "updatedAt": "2025-09-09T15:11:08.000Z",
+  "createdAt": "2025-09-09T14:32:13.931Z",
+  "id": "4afQXm0VSuxhggHl",
+  "name": "Production Error Handling",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "a3c34830-4f3b-455c-b103-8d7fa6c66546",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        464,
+        368
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.piapi.ai/api/v1/task",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"model\": \"Qubico/flux1-dev\",\n    \"task_type\": \"txt2img\",\n    \"input\": {\n        \"prompt\": \"A waffle personified as a human. The waffle is wearing a suit and tie.\",\n        \"width\": 540, \n        \"height\": 960\n    } \n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        528,
+        -80
+      ],
+      "id": "2985cbd8-c74b-43c6-b73b-6cd70bb71d8c",
+      "name": "Generate Image",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "7vchEJYvIzry0phu",
+          "name": "Tavily Credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.piapi.ai/api/v1/task/{{ $json.data.task_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        784,
+        -80
+      ],
+      "id": "d7fd5cdb-730b-4364-bd49-cec46fddddf9",
+      "name": "Get Images"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b18d8c25-c1a1-4583-b75c-3ebad98b212a",
+              "leftValue": "={{ $json.data.status }}",
+              "rightValue": "completed",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        912,
+        -80
+      ],
+      "id": "fe3627bf-ccdc-4283-97cf-747060ce8db1",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        656,
+        -80
+      ],
+      "id": "13c6f89c-9307-48c1-8ca0-e4d817312c78",
+      "name": "Wait",
+      "webhookId": "7ab54d36-3c1b-4dda-92ce-f4bf1879c15d"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1056,
+        -16
+      ],
+      "id": "1bdd0b3f-5d5f-4007-8daf-7657b7ab574c",
+      "name": "Wait1",
+      "webhookId": "33adf426-612c-4780-9d92-78bc428a9244"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6f7a5a6a-d14e-4e29-b81e-30e24a059c38",
+              "name": "query",
+              "value": "\"pineapples on pizza\"",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        368
+      ],
+      "id": "2270fa88-bdfb-4b6e-9dbe-87cdd1c25bd1",
+      "name": "Set"
+    },
+    {
+      "parameters": {
+        "content": "# Production Ready Error Handling\n**Author: [Nate Herk](https://www.youtube.com/@nateherk)**\n\n## Errors that...\n### - Send notifications\n### - Are logged\n### - Have retry/fallback logic\n### - Fail safely\n\n\n\n## 1) Error Workflow\n## 2) Retry on Failure\n## 3) Fallback LLM\n## 4) Continue on Error\n## 5) Polling\n\n## 🎁 Bonus: Building Guardrails",
+        "height": 608,
+        "width": 576
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -3456
+      ],
+      "id": "c1e6f94d-7afd-49c4-a388-459b596f58bf",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code Node - Output array of companies\nconst items = [\n  { json: { value: \"google\" } },\n  { json: { value: \"meta\" } },\n  { json: { value: '\"nvidia\"' } }\n];\n\nreturn items;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        -1616
+      ],
+      "id": "5855e583-0774-46bc-b85a-eecd981dae18",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "0b9c2e85-712e-47ef-9628-cb4ae0104caa",
+      "name": "Loop Over Items",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        816,
+        -1616
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "00873281-b8c8-400e-8385-e5fd5e35ae9d",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5d58a96e-058b-4360-9e7e-690c628c5631",
+      "name": "Example",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1056,
+        -1728
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "tavilyApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"{{ $json.query.replace(/\"/g, '') }}\",\n  \"topic\": \"general\",\n  \"search_depth\": \"basic\",\n  \"chunks_per_source\": 3,\n  \"max_results\": 1,\n  \"time_range\": null,\n  \"days\": 7,\n  \"include_answer\": true,\n  \"include_raw_content\": false,\n  \"include_images\": false,\n  \"include_image_descriptions\": false,\n  \"include_domains\": [],\n  \"exclude_domains\": []\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        848,
+        368
+      ],
+      "id": "e9b18124-7fe9-4b6e-9685-3086b843dbd2",
+      "name": "Tavily 1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "tavilyApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"{{ $json.value }}\",\n  \"auto_parameters\": false,\n  \"topic\": \"general\",\n  \"search_depth\": \"basic\",\n  \"chunks_per_source\": 3,\n  \"max_results\": 1,\n  \"time_range\": null,\n  \"days\": 7,\n  \"include_answer\": true,\n  \"include_raw_content\": true,\n  \"include_images\": false,\n  \"include_image_descriptions\": false,\n  \"include_favicon\": false,\n  \"include_domains\": [],\n  \"exclude_domains\": [],\n  \"country\": null\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1056,
+        -1504
+      ],
+      "id": "0df09860-fe87-4ed3-8b92-59e2c165a8b3",
+      "name": "Tavily"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        464,
+        -3040
+      ],
+      "id": "45a831bb-631c-43b5-92a8-d5dc71d61071",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        496,
+        -3328
+      ],
+      "id": "df204668-3106-4ed8-aff8-0019edeb3725",
+      "name": "Bad Agent"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        896,
+        -3312
+      ],
+      "id": "4ac29342-c602-4cea-987a-bf0fb23ecfcd",
+      "name": "Get a record in Airtable"
+    },
+    {
+      "parameters": {
+        "content": "# 1) Error Workflow - [Full video](https://youtu.be/bTF3tACqPRU?si=Z0-Q_I9-tN4Eioim)",
+        "height": 608,
+        "width": 768,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        352,
+        -3456
+      ],
+      "id": "6e074c13-0205-463b-97d9-23a0de1f0f07",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1pqsIwwXktJ7uVHKAr29NAuqpEvEWMFgQRFN4tUIwJy4",
+          "mode": "list",
+          "cachedResultName": "Error Logs",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pqsIwwXktJ7uVHKAr29NAuqpEvEWMFgQRFN4tUIwJy4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pqsIwwXktJ7uVHKAr29NAuqpEvEWMFgQRFN4tUIwJy4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Workflow",
+              "displayName": "Workflow",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Node",
+              "displayName": "Node",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Error Message",
+              "displayName": "Error Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        720,
+        -3120
+      ],
+      "id": "bb0bee57-6682-46be-b496-b5ce4d3ec2fd",
+      "name": "Log Error"
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C08L6NKQBEW",
+          "mode": "list",
+          "cachedResultName": "all-awesome-ai-stuff"
+        },
+        "text": "ERROR",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        864,
+        -3008
+      ],
+      "id": "fb709226-f5f7-4058-b24d-f92eb0617718",
+      "name": "Error Notification",
+      "webhookId": "bd1df886-4a72-40b3-b884-87d460940833"
+    },
+    {
+      "parameters": {
+        "content": "# 2) Retry on Failure",
+        "height": 480,
+        "width": 768,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        352,
+        -2832
+      ],
+      "id": "148e36d9-0c2b-4f60-aa89-88fbe6a525e4",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "needsFallback": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        416,
+        -2720
+      ],
+      "id": "0157ee73-c64d-4889-bb2d-ae0a70fdda28",
+      "name": "AI Agent",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        464,
+        -2528
+      ],
+      "id": "ce5f15de-8a52-4573-bffb-bd7fcb6a7b0b",
+      "name": "OpenRouter Chat Model"
+    },
+    {
+      "parameters": {
+        "sendTo": "nate@example.com",
+        "subject": "Test",
+        "message": "Test",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        816,
+        -2720
+      ],
+      "id": "a81a9e58-af05-4ac9-8d00-c705c31693a6",
+      "name": "Send a message",
+      "webhookId": "5c0cba63-4f51-4506-b51a-5820900b4b9c",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  item.json.myNewField = 1;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        688,
+        -2544
+      ],
+      "id": "9021b4e2-21aa-4f56-928e-a3e61bc18308",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "url": "http://cool.com",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        928,
+        -2544
+      ],
+      "id": "c0552292-c967-41fe-8862-d54c846568ce",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "needsFallback": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        640,
+        -2192
+      ],
+      "id": "6e610ee9-9f94-49fa-8140-df484bf1ead2",
+      "name": "Fallback Agent",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        608,
+        -2032
+      ],
+      "id": "2ec95196-f9ed-4ba7-9ed7-a5f2d9a18d85",
+      "name": "OpenRouter",
+      "credentials": {
+        "openRouterApi": {
+          "id": "O4Ms8iUOOIP77I0Z",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# 3) Fallback LLM",
+        "height": 480,
+        "width": 768,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        352,
+        -2336
+      ],
+      "id": "8688674a-d63e-435c-bcfe-101a77c229c3",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "# 4) Continue on Error",
+        "height": 1568,
+        "width": 912,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        352,
+        -1840
+      ],
+      "id": "bbe49f4c-0230-476d-b1dd-f1a675fd2eae",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Stops Workflow",
+        "height": 208,
+        "width": 224,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        992,
+        -1568
+      ],
+      "id": "ef3c22a8-e205-4b26-bb8e-132f80b62ab6",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code Node - Output array of companies\nconst items = [\n  { json: { value: \"google\" } },\n  { json: { value: \"meta\" } },\n  { json: { value: '\"nvidia\"' } }\n];\n\nreturn items;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        -1136
+      ],
+      "id": "3f3bada8-78f3-4536-87de-dd805bc54d7f",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "3d01c6be-a647-4c55-8475-3fb2de6b4b21",
+      "name": "Loop Over Items1",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        816,
+        -1136
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "00873281-b8c8-400e-8385-e5fd5e35ae9d",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "43059af5-2fef-42f8-b355-2721d0cdab0a",
+      "name": "Example1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1056,
+        -1248
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "tavilyApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"{{ $json.value }}\",\n  \"auto_parameters\": false,\n  \"topic\": \"general\",\n  \"search_depth\": \"basic\",\n  \"chunks_per_source\": 3,\n  \"max_results\": 1,\n  \"time_range\": null,\n  \"days\": 7,\n  \"include_answer\": true,\n  \"include_raw_content\": true,\n  \"include_images\": false,\n  \"include_image_descriptions\": false,\n  \"include_favicon\": false,\n  \"include_domains\": [],\n  \"exclude_domains\": [],\n  \"country\": null\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1056,
+        -1024
+      ],
+      "id": "233c29a8-1b68-4744-af6f-21e2161db763",
+      "name": "Tavily1",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "## Workflow Continues\n",
+        "height": 208,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        992,
+        -1088
+      ],
+      "id": "329dc49a-e27c-45d2-8225-b6db2bccca98",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code Node - Output array of companies\nconst items = [\n  { json: { value: \"google\" } },\n  { json: { value: \"meta\" } },\n  { json: { value: '\"nvidia\"' } }\n];\n\nreturn items;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        -656
+      ],
+      "id": "1ce76280-94fc-495b-98af-fc15be3b5c50",
+      "name": "Code3"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "62cf733a-fb61-49a4-8048-606d07df0606",
+      "name": "Loop Over Items2",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        816,
+        -656
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "00873281-b8c8-400e-8385-e5fd5e35ae9d",
+              "name": "data",
+              "value": "={{ $json.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3e37f377-e67a-4d1b-b83d-8f879dcc81aa",
+      "name": "Example2",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1056,
+        -768
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "tavilyApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"{{ $json.value }}\",\n  \"auto_parameters\": false,\n  \"topic\": \"general\",\n  \"search_depth\": \"basic\",\n  \"chunks_per_source\": 3,\n  \"max_results\": 1,\n  \"time_range\": null,\n  \"days\": 7,\n  \"include_answer\": true,\n  \"include_raw_content\": true,\n  \"include_images\": false,\n  \"include_image_descriptions\": false,\n  \"include_favicon\": false,\n  \"include_domains\": [],\n  \"exclude_domains\": [],\n  \"country\": null\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1056,
+        -544
+      ],
+      "id": "39c15da4-aa5b-44c5-966a-84007e5d91c9",
+      "name": "Tavily2",
+      "alwaysOutputData": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "content": "## Good.\n",
+        "height": 208,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        992,
+        -608
+      ],
+      "id": "b974c577-1db9-4f5e-b5ea-094a86ebc097",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "# 5) Polling",
+        "height": 480,
+        "width": 912,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        352,
+        -256
+      ],
+      "id": "20e1497d-a146-4f8d-a956-1c2aa75a9bfd",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "# Guardrail Example\n",
+        "height": 352,
+        "width": 912
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        352,
+        240
+      ],
+      "id": "ac51b37f-ac16-4b86-85e2-7319e82510c0",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        448,
+        -2192
+      ],
+      "id": "64f6aea1-c160-4ecf-a50a-f8a7dff10ebf",
+      "name": "When chat message received",
+      "webhookId": "5f8b5568-5968-4fd9-bb7f-3ae16f4e8bb5",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "query": "={{ $json.query.replace(/\"/g, '') }}",
+        "options": {}
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavily",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        368
+      ],
+      "id": "2e5f880d-cb40-4195-aee1-d5b8b631f864",
+      "name": "Search"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        720,
+        -1984
+      ],
+      "id": "a405e16d-03cc-41c5-bf80-aa936789c79a",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "IfZ7w9jey4t4KuBS",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Set",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Image": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Images": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get Images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Get Images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set": {
+      "main": [
+        [
+          {
+            "node": "Tavily 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Example",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Tavily",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tavily": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a record in Airtable": {
+      "ai_tool": [
+        [
+          {
+            "node": "Bad Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Log Error",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Error Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Fallback Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Example1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Tavily1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tavily1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [
+          {
+            "node": "Example2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Tavily2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tavily2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Fallback Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Fallback Agent",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "314ea158-3479-4309-8771-3fd0afbe0db7",
+  "activeVersionId": "314ea158-3479-4309-8771-3fd0afbe0db7",
+  "versionCounter": 2,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-13T17:42:32.608Z",
+      "createdAt": "2025-12-13T17:42:32.608Z",
+      "role": "workflow:owner",
+      "workflowId": "4afQXm0VSuxhggHl",
+      "projectId": "HZqYjnNmPLW2kkrP",
+      "project": {
+        "updatedAt": "2025-12-12T12:37:29.393Z",
+        "createdAt": "2025-12-12T12:34:20.173Z",
+        "id": "HZqYjnNmPLW2kkrP",
+        "name": "Miguel Simon <miguel.simon@digitalpneuma.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-12-12T12:34:20.173Z",
+            "createdAt": "2025-12-12T12:34:20.173Z",
+            "userId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+            "projectId": "HZqYjnNmPLW2kkrP",
+            "user": {
+              "updatedAt": "2026-01-31T12:34:46.000Z",
+              "createdAt": "2025-12-12T12:34:19.617Z",
+              "id": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+              "email": "miguel.simon@digitalpneuma.com",
+              "firstName": "Miguel",
+              "lastName": "Simon",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-12-12T12:39:28.094Z",
+                "personalization_survey_n8n_version": "1.123.5",
+                "automationGoalDevops": [
+                  "other",
+                  "monitoring-alerting",
+                  "reporting"
+                ],
+                "automationGoalDevopsOther": "Build workflows to automate manual processes",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "GjxXDVv1iBEVBdE4",
+                "userActivatedAt": 1765753766341,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1767113477505
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-01-30",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-01-07T01:41:53.261Z",
+    "createdAt": "2026-01-07T01:41:53.261Z",
+    "versionId": "314ea158-3479-4309-8771-3fd0afbe0db7",
+    "workflowId": "4afQXm0VSuxhggHl",
+    "nodes": [
+      {
+        "parameters": {},
+        "id": "a3c34830-4f3b-455c-b103-8d7fa6c66546",
+        "name": "When clicking ‘Test workflow’",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          464,
+          368
+        ],
+        "disabled": true
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.piapi.ai/api/v1/task",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n    \"model\": \"Qubico/flux1-dev\",\n    \"task_type\": \"txt2img\",\n    \"input\": {\n        \"prompt\": \"A waffle personified as a human. The waffle is wearing a suit and tie.\",\n        \"width\": 540, \n        \"height\": 960\n    } \n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          528,
+          -80
+        ],
+        "id": "2985cbd8-c74b-43c6-b73b-6cd70bb71d8c",
+        "name": "Generate Image",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "7vchEJYvIzry0phu",
+            "name": "Tavily Credential"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "=https://api.piapi.ai/api/v1/task/{{ $json.data.task_id }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          784,
+          -80
+        ],
+        "id": "d7fd5cdb-730b-4364-bd49-cec46fddddf9",
+        "name": "Get Images"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "b18d8c25-c1a1-4583-b75c-3ebad98b212a",
+                "leftValue": "={{ $json.data.status }}",
+                "rightValue": "completed",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          912,
+          -80
+        ],
+        "id": "fe3627bf-ccdc-4283-97cf-747060ce8db1",
+        "name": "If1"
+      },
+      {
+        "parameters": {
+          "amount": 1
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          656,
+          -80
+        ],
+        "id": "13c6f89c-9307-48c1-8ca0-e4d817312c78",
+        "name": "Wait",
+        "webhookId": "7ab54d36-3c1b-4dda-92ce-f4bf1879c15d"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1056,
+          -16
+        ],
+        "id": "1bdd0b3f-5d5f-4007-8daf-7657b7ab574c",
+        "name": "Wait1",
+        "webhookId": "33adf426-612c-4780-9d92-78bc428a9244"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "6f7a5a6a-d14e-4e29-b81e-30e24a059c38",
+                "name": "query",
+                "value": "\"pineapples on pizza\"",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          672,
+          368
+        ],
+        "id": "2270fa88-bdfb-4b6e-9dbe-87cdd1c25bd1",
+        "name": "Set"
+      },
+      {
+        "parameters": {
+          "content": "# Production Ready Error Handling\n**Author: [Nate Herk](https://www.youtube.com/@nateherk)**\n\n## Errors that...\n### - Send notifications\n### - Are logged\n### - Have retry/fallback logic\n### - Fail safely\n\n\n\n## 1) Error Workflow\n## 2) Retry on Failure\n## 3) Fallback LLM\n## 4) Continue on Error\n## 5) Polling\n\n## 🎁 Bonus: Building Guardrails",
+          "height": 608,
+          "width": 576
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -240,
+          -3456
+        ],
+        "id": "c1e6f94d-7afd-49c4-a388-459b596f58bf",
+        "name": "Sticky Note3"
+      },
+      {
+        "parameters": {
+          "jsCode": "// n8n Code Node - Output array of companies\nconst items = [\n  { json: { value: \"google\" } },\n  { json: { value: \"meta\" } },\n  { json: { value: '\"nvidia\"' } }\n];\n\nreturn items;"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          624,
+          -1616
+        ],
+        "id": "5855e583-0774-46bc-b85a-eecd981dae18",
+        "name": "Code"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "0b9c2e85-712e-47ef-9628-cb4ae0104caa",
+        "name": "Loop Over Items",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          816,
+          -1616
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "00873281-b8c8-400e-8385-e5fd5e35ae9d",
+                "name": "data",
+                "value": "={{ $json.data }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "5d58a96e-058b-4360-9e7e-690c628c5631",
+        "name": "Example",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1056,
+          -1728
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.tavily.com/search",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "tavilyApi",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"query\": \"{{ $json.query.replace(/\"/g, '') }}\",\n  \"topic\": \"general\",\n  \"search_depth\": \"basic\",\n  \"chunks_per_source\": 3,\n  \"max_results\": 1,\n  \"time_range\": null,\n  \"days\": 7,\n  \"include_answer\": true,\n  \"include_raw_content\": false,\n  \"include_images\": false,\n  \"include_image_descriptions\": false,\n  \"include_domains\": [],\n  \"exclude_domains\": []\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          848,
+          368
+        ],
+        "id": "e9b18124-7fe9-4b6e-9685-3086b843dbd2",
+        "name": "Tavily 1"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.tavily.com/search",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "tavilyApi",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"query\": \"{{ $json.value }}\",\n  \"auto_parameters\": false,\n  \"topic\": \"general\",\n  \"search_depth\": \"basic\",\n  \"chunks_per_source\": 3,\n  \"max_results\": 1,\n  \"time_range\": null,\n  \"days\": 7,\n  \"include_answer\": true,\n  \"include_raw_content\": true,\n  \"include_images\": false,\n  \"include_image_descriptions\": false,\n  \"include_favicon\": false,\n  \"include_domains\": [],\n  \"exclude_domains\": [],\n  \"country\": null\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1056,
+          -1504
+        ],
+        "id": "0df09860-fe87-4ed3-8b92-59e2c165a8b3",
+        "name": "Tavily"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.errorTrigger",
+        "typeVersion": 1,
+        "position": [
+          464,
+          -3040
+        ],
+        "id": "45a831bb-631c-43b5-92a8-d5dc71d61071",
+        "name": "Error Trigger"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2.1,
+        "position": [
+          496,
+          -3328
+        ],
+        "id": "df204668-3106-4ed8-aff8-0019edeb3725",
+        "name": "Bad Agent"
+      },
+      {
+        "parameters": {
+          "base": {
+            "__rl": true,
+            "mode": "list",
+            "value": ""
+          },
+          "table": {
+            "__rl": true,
+            "mode": "list",
+            "value": ""
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.airtableTool",
+        "typeVersion": 2.1,
+        "position": [
+          896,
+          -3312
+        ],
+        "id": "4ac29342-c602-4cea-987a-bf0fb23ecfcd",
+        "name": "Get a record in Airtable"
+      },
+      {
+        "parameters": {
+          "content": "# 1) Error Workflow - [Full video](https://youtu.be/bTF3tACqPRU?si=Z0-Q_I9-tN4Eioim)",
+          "height": 608,
+          "width": 768,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          352,
+          -3456
+        ],
+        "id": "6e074c13-0205-463b-97d9-23a0de1f0f07",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "1pqsIwwXktJ7uVHKAr29NAuqpEvEWMFgQRFN4tUIwJy4",
+            "mode": "list",
+            "cachedResultName": "Error Logs",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pqsIwwXktJ7uVHKAr29NAuqpEvEWMFgQRFN4tUIwJy4/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Sheet1",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pqsIwwXktJ7uVHKAr29NAuqpEvEWMFgQRFN4tUIwJy4/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {},
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "Timestamp",
+                "displayName": "Timestamp",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Workflow",
+                "displayName": "Workflow",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "URL",
+                "displayName": "URL",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Node",
+                "displayName": "Node",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Error Message",
+                "displayName": "Error Message",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.6,
+        "position": [
+          720,
+          -3120
+        ],
+        "id": "bb0bee57-6682-46be-b496-b5ce4d3ec2fd",
+        "name": "Log Error"
+      },
+      {
+        "parameters": {
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C08L6NKQBEW",
+            "mode": "list",
+            "cachedResultName": "all-awesome-ai-stuff"
+          },
+          "text": "ERROR",
+          "otherOptions": {}
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.3,
+        "position": [
+          864,
+          -3008
+        ],
+        "id": "fb709226-f5f7-4058-b24d-f92eb0617718",
+        "name": "Error Notification",
+        "webhookId": "bd1df886-4a72-40b3-b884-87d460940833"
+      },
+      {
+        "parameters": {
+          "content": "# 2) Retry on Failure",
+          "height": 480,
+          "width": 768,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          352,
+          -2832
+        ],
+        "id": "148e36d9-0c2b-4f60-aa89-88fbe6a525e4",
+        "name": "Sticky Note1"
+      },
+      {
+        "parameters": {
+          "needsFallback": true,
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2.1,
+        "position": [
+          416,
+          -2720
+        ],
+        "id": "0157ee73-c64d-4889-bb2d-ae0a70fdda28",
+        "name": "AI Agent",
+        "retryOnFail": true
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+        "typeVersion": 1,
+        "position": [
+          464,
+          -2528
+        ],
+        "id": "ce5f15de-8a52-4573-bffb-bd7fcb6a7b0b",
+        "name": "OpenRouter Chat Model"
+      },
+      {
+        "parameters": {
+          "sendTo": "nate@example.com",
+          "subject": "Test",
+          "message": "Test",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.1,
+        "position": [
+          816,
+          -2720
+        ],
+        "id": "a81a9e58-af05-4ac9-8d00-c705c31693a6",
+        "name": "Send a message",
+        "webhookId": "5c0cba63-4f51-4506-b51a-5820900b4b9c",
+        "retryOnFail": true
+      },
+      {
+        "parameters": {
+          "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  item.json.myNewField = 1;\n}\n\nreturn $input.all();"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          688,
+          -2544
+        ],
+        "id": "9021b4e2-21aa-4f56-928e-a3e61bc18308",
+        "name": "Code1"
+      },
+      {
+        "parameters": {
+          "url": "http://cool.com",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          928,
+          -2544
+        ],
+        "id": "c0552292-c967-41fe-8862-d54c846568ce",
+        "name": "HTTP Request"
+      },
+      {
+        "parameters": {
+          "needsFallback": true,
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 2.1,
+        "position": [
+          640,
+          -2192
+        ],
+        "id": "6e610ee9-9f94-49fa-8140-df484bf1ead2",
+        "name": "Fallback Agent",
+        "retryOnFail": true
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+        "typeVersion": 1,
+        "position": [
+          608,
+          -2032
+        ],
+        "id": "2ec95196-f9ed-4ba7-9ed7-a5f2d9a18d85",
+        "name": "OpenRouter",
+        "credentials": {
+          "openRouterApi": {
+            "id": "O4Ms8iUOOIP77I0Z",
+            "name": "OpenRouter account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "# 3) Fallback LLM",
+          "height": 480,
+          "width": 768,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          352,
+          -2336
+        ],
+        "id": "8688674a-d63e-435c-bcfe-101a77c229c3",
+        "name": "Sticky Note2"
+      },
+      {
+        "parameters": {
+          "content": "# 4) Continue on Error",
+          "height": 1568,
+          "width": 912,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          352,
+          -1840
+        ],
+        "id": "bbe49f4c-0230-476d-b1dd-f1a675fd2eae",
+        "name": "Sticky Note4"
+      },
+      {
+        "parameters": {
+          "content": "## Stops Workflow",
+          "height": 208,
+          "width": 224,
+          "color": 7
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          992,
+          -1568
+        ],
+        "id": "ef3c22a8-e205-4b26-bb8e-132f80b62ab6",
+        "name": "Sticky Note5"
+      },
+      {
+        "parameters": {
+          "jsCode": "// n8n Code Node - Output array of companies\nconst items = [\n  { json: { value: \"google\" } },\n  { json: { value: \"meta\" } },\n  { json: { value: '\"nvidia\"' } }\n];\n\nreturn items;"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          624,
+          -1136
+        ],
+        "id": "3f3bada8-78f3-4536-87de-dd805bc54d7f",
+        "name": "Code2"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "3d01c6be-a647-4c55-8475-3fb2de6b4b21",
+        "name": "Loop Over Items1",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          816,
+          -1136
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "00873281-b8c8-400e-8385-e5fd5e35ae9d",
+                "name": "data",
+                "value": "={{ $json.data }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "43059af5-2fef-42f8-b355-2721d0cdab0a",
+        "name": "Example1",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1056,
+          -1248
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.tavily.com/search",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "tavilyApi",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"query\": \"{{ $json.value }}\",\n  \"auto_parameters\": false,\n  \"topic\": \"general\",\n  \"search_depth\": \"basic\",\n  \"chunks_per_source\": 3,\n  \"max_results\": 1,\n  \"time_range\": null,\n  \"days\": 7,\n  \"include_answer\": true,\n  \"include_raw_content\": true,\n  \"include_images\": false,\n  \"include_image_descriptions\": false,\n  \"include_favicon\": false,\n  \"include_domains\": [],\n  \"exclude_domains\": [],\n  \"country\": null\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1056,
+          -1024
+        ],
+        "id": "233c29a8-1b68-4744-af6f-21e2161db763",
+        "name": "Tavily1",
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "content": "## Workflow Continues\n",
+          "height": 208,
+          "color": 7
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          992,
+          -1088
+        ],
+        "id": "329dc49a-e27c-45d2-8225-b6db2bccca98",
+        "name": "Sticky Note6"
+      },
+      {
+        "parameters": {
+          "jsCode": "// n8n Code Node - Output array of companies\nconst items = [\n  { json: { value: \"google\" } },\n  { json: { value: \"meta\" } },\n  { json: { value: '\"nvidia\"' } }\n];\n\nreturn items;"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          624,
+          -656
+        ],
+        "id": "1ce76280-94fc-495b-98af-fc15be3b5c50",
+        "name": "Code3"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "62cf733a-fb61-49a4-8048-606d07df0606",
+        "name": "Loop Over Items2",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          816,
+          -656
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "00873281-b8c8-400e-8385-e5fd5e35ae9d",
+                "name": "data",
+                "value": "={{ $json.data }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "3e37f377-e67a-4d1b-b83d-8f879dcc81aa",
+        "name": "Example2",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1056,
+          -768
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.tavily.com/search",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "tavilyApi",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"query\": \"{{ $json.value }}\",\n  \"auto_parameters\": false,\n  \"topic\": \"general\",\n  \"search_depth\": \"basic\",\n  \"chunks_per_source\": 3,\n  \"max_results\": 1,\n  \"time_range\": null,\n  \"days\": 7,\n  \"include_answer\": true,\n  \"include_raw_content\": true,\n  \"include_images\": false,\n  \"include_image_descriptions\": false,\n  \"include_favicon\": false,\n  \"include_domains\": [],\n  \"exclude_domains\": [],\n  \"country\": null\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1056,
+          -544
+        ],
+        "id": "39c15da4-aa5b-44c5-966a-84007e5d91c9",
+        "name": "Tavily2",
+        "alwaysOutputData": false,
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "content": "## Good.\n",
+          "height": 208,
+          "color": 7
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          992,
+          -608
+        ],
+        "id": "b974c577-1db9-4f5e-b5ea-094a86ebc097",
+        "name": "Sticky Note7"
+      },
+      {
+        "parameters": {
+          "content": "# 5) Polling",
+          "height": 480,
+          "width": 912,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          352,
+          -256
+        ],
+        "id": "20e1497d-a146-4f8d-a956-1c2aa75a9bfd",
+        "name": "Sticky Note8"
+      },
+      {
+        "parameters": {
+          "content": "# Guardrail Example\n",
+          "height": 352,
+          "width": 912
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          352,
+          240
+        ],
+        "id": "ac51b37f-ac16-4b86-85e2-7319e82510c0",
+        "name": "Sticky Note9"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          448,
+          -2192
+        ],
+        "id": "64f6aea1-c160-4ecf-a50a-f8a7dff10ebf",
+        "name": "When chat message received",
+        "webhookId": "5f8b5568-5968-4fd9-bb7f-3ae16f4e8bb5",
+        "disabled": true
+      },
+      {
+        "parameters": {
+          "query": "={{ $json.query.replace(/\"/g, '') }}",
+          "options": {}
+        },
+        "type": "@tavily/n8n-nodes-tavily.tavily",
+        "typeVersion": 1,
+        "position": [
+          1056,
+          368
+        ],
+        "id": "2e5f880d-cb40-4195-aee1-d5b8b631f864",
+        "name": "Search"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "list",
+            "value": "gpt-4.1-mini"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.2,
+        "position": [
+          720,
+          -1984
+        ],
+        "id": "a405e16d-03cc-41c5-bf80-aa936789c79a",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "IfZ7w9jey4t4KuBS",
+            "name": "OpenAi account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "When clicking ‘Test workflow’": {
+        "main": [
+          [
+            {
+              "node": "Set",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Generate Image": {
+        "main": [
+          [
+            {
+              "node": "Wait",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Images": {
+        "main": [
+          [
+            {
+              "node": "If1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If1": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Wait1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait": {
+        "main": [
+          [
+            {
+              "node": "Get Images",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait1": {
+        "main": [
+          [
+            {
+              "node": "Get Images",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Set": {
+        "main": [
+          [
+            {
+              "node": "Tavily 1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [
+            {
+              "node": "Example",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Tavily",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Tavily": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get a record in Airtable": {
+        "ai_tool": [
+          [
+            {
+              "node": "Bad Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Error Trigger": {
+        "main": [
+          [
+            {
+              "node": "Log Error",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Error Notification",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenRouter Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenRouter": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Fallback Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code2": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items1": {
+        "main": [
+          [
+            {
+              "node": "Example1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Tavily1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Tavily1": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Code3": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items2": {
+        "main": [
+          [
+            {
+              "node": "Example2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Tavily2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Tavily2": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When chat message received": {
+        "main": [
+          [
+            {
+              "node": "Fallback Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Fallback Agent",
+              "type": "ai_languageModel",
+              "index": 1
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "system migration",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": []
+  }
+}
