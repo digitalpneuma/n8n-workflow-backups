@@ -1,0 +1,502 @@
+{
+  "updatedAt": "2025-08-13T12:11:28.835Z",
+  "createdAt": "2025-08-13T12:11:28.835Z",
+  "id": "MpiTrB39YWHizRmy",
+  "name": "My workflow 9",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cc0761a3-53c7-42eb-82aa-e6c59043f46d",
+              "name": "url3",
+              "value": "https://www.mcdonalds.com/us/en-us.html",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1328,
+        608
+      ],
+      "id": "87e56184-f067-4424-b780-38ba3865cac8",
+      "name": "URL 3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cc0761a3-53c7-42eb-82aa-e6c59043f46d",
+              "name": "url2",
+              "value": "https://www.nvidia.com/en-us/",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1328,
+        384
+      ],
+      "id": "d4f106ac-b00c-415a-ab89-e84023ce7d70",
+      "name": "URL 2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cc0761a3-53c7-42eb-82aa-e6c59043f46d",
+              "name": "url1",
+              "value": "https://www.apple.com/",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1328,
+        160
+      ],
+      "id": "021da7b7-68fc-43b9-8d75-ed848474625b",
+      "name": "URL 1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        928,
+        384
+      ],
+      "id": "dd94e9b8-6346-46c7-a91e-ea559af877a0",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 3,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        912,
+        2352
+      ],
+      "id": "a2b97e9d-8f67-4cff-b627-b466c5aa3bbf",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "364ea10d-5c32-4e9d-9687-0d895ccbfc72",
+              "name": "urls",
+              "value": "=[\"{{ $json.url1 }}\",\"{{ $json.url2 }}\",\"{{ $json.url3 }}\"]",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {
+          "ignoreConversionErrors": false
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1120,
+        2352
+      ],
+      "id": "2b418ffd-1392-43cc-9231-f2c1d6c9bd9f",
+      "name": "Turn into Array1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "urls",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1328,
+        2352
+      ],
+      "id": "f01dc074-3605-429f-9b8d-9cb3ec82b6f4",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.urls }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1520,
+        2352
+      ],
+      "id": "7927abf6-2497-4669-81df-32a5ba3f5a6c",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1744,
+        2352
+      ],
+      "id": "ba06ca91-b146-484f-811b-eaa3b4e84ba2",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "01550d40-4fa1-4b35-b6d1-3bbdf30d199c",
+              "name": "url1",
+              "value": "={{ $json.data[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "f7e3de2b-b0b5-4999-8b19-ba5b81a70d16",
+              "name": "url2",
+              "value": "={{ $json.data[1] }}",
+              "type": "string"
+            },
+            {
+              "id": "39657d25-8701-4086-8456-1ae24104a075",
+              "name": "url3",
+              "value": "={{ $json.data[2] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1968,
+        2352
+      ],
+      "id": "42ebffc8-e40f-4d43-bca6-16fa38de7dcb",
+      "name": "Output1"
+    },
+    {
+      "parameters": {
+        "content": "# Solution\n## Note: There are a few ways to do this, but this is how I solved it",
+        "height": 760,
+        "width": 1980,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        288,
+        2000
+      ],
+      "id": "b0096a5b-e1ed-4851-a9e3-0ab03b5ca2b8",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cc0761a3-53c7-42eb-82aa-e6c59043f46d",
+              "name": "url1",
+              "value": "https://www.apple.com/",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        528,
+        2192
+      ],
+      "id": "008ed128-95f5-47ef-9e20-bcbfa4f8cc4f",
+      "name": "URL_1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cc0761a3-53c7-42eb-82aa-e6c59043f46d",
+              "name": "url3",
+              "value": "https://www.mcdonalds.com/us/en-us.html",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        528,
+        2528
+      ],
+      "id": "441c6b95-b009-4a5a-b63e-24d72aec948d",
+      "name": "URL_3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cc0761a3-53c7-42eb-82aa-e6c59043f46d",
+              "name": "url2",
+              "value": "https://www.nvidia.com/en-us/",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        528,
+        2352
+      ],
+      "id": "810ee6ad-d407-47e1-a698-0fb533e2a1ef",
+      "name": "URL_2"
+    },
+    {
+      "parameters": {
+        "content": "## 🤖 Puzzle Challenge: Merge Raw HTML from Multiple URLs\n\nYou received **three separate URLs** from different data sources.  \nEach one points to a unique webpage that you'll need to fetch and process.  \n\nYour goal is to **retrieve the raw HTML** from each of these URLs and combine them into a **single item** that looks like this:\n\n## 🟨 Input URLs\n- `url1`: https://www.apple.com/\n- `url2`: https://www.nvidia.com/en-us/\n- `url3`: https://www.mcdonalds.com/us/en-us.html\n\n## 🎯 Your Goal\nUse the appropriate nodes (like HTTP Request, Merge, Set, or Function) to:\n- Fetch raw HTML from each URL\n- Combine all results into **one item**\n- Return this final structure:\n\n```json\n{\n  \"url1\": raw html,\n  \"url2\": raw html,\n  \"url3\": raw html\n}\n```\n\nThis one's a bit trickier! If you get stuck, scroll down and inspect each node to understand how the data transforms step-by-step.  \n\n> 💡 Tip: This isn’t the only correct solution. If you end up with the correct final structure, you’ve succeeded in manipulating the data.\n\nSOLUTION is below. Don't spoil it!\n",
+        "height": 840,
+        "width": 800
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "18a9f150-b9f1-41d1-a577-a79dd298fad2",
+      "name": "Sticky Note1"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "URL 3",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "URL 1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "URL 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Turn into Array1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Turn into Array1": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "Output1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "URL_1": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "URL_3": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "URL_2": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "7402fd2c-d7c0-4890-b9f6-5c5f23b7ca4f",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2025-12-13T17:41:55.094Z",
+      "createdAt": "2025-12-13T17:41:55.094Z",
+      "role": "workflow:owner",
+      "workflowId": "MpiTrB39YWHizRmy",
+      "projectId": "HZqYjnNmPLW2kkrP",
+      "project": {
+        "updatedAt": "2025-12-12T12:37:29.393Z",
+        "createdAt": "2025-12-12T12:34:20.173Z",
+        "id": "HZqYjnNmPLW2kkrP",
+        "name": "Miguel Simon <miguel.simon@digitalpneuma.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+        "projectRelations": [
+          {
+            "updatedAt": "2025-12-12T12:34:20.173Z",
+            "createdAt": "2025-12-12T12:34:20.173Z",
+            "userId": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+            "projectId": "HZqYjnNmPLW2kkrP",
+            "user": {
+              "updatedAt": "2026-01-31T12:34:46.000Z",
+              "createdAt": "2025-12-12T12:34:19.617Z",
+              "id": "14cb2dc1-5e19-4420-bbb3-8cfefe5b8586",
+              "email": "miguel.simon@digitalpneuma.com",
+              "firstName": "Miguel",
+              "lastName": "Simon",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-12-12T12:39:28.094Z",
+                "personalization_survey_n8n_version": "1.123.5",
+                "automationGoalDevops": [
+                  "other",
+                  "monitoring-alerting",
+                  "reporting"
+                ],
+                "automationGoalDevopsOther": "Build workflows to automate manual processes",
+                "companySize": "<20",
+                "companyType": "digital-agency",
+                "role": "engineering",
+                "reportedSource": "youtube"
+              },
+              "settings": {
+                "userActivated": true,
+                "firstSuccessfulWorkflowId": "GjxXDVv1iBEVBdE4",
+                "userActivatedAt": 1765753766341,
+                "easyAIWorkflowOnboarded": true,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1767113477505
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-01-30",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": null
+}
